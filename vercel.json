@@ -6,7 +6,15 @@
   "cleanUrls": true,
   "trailingSlash": true,
   "redirects": [
-    { "source": "/ru", "destination": "/", "permanent": true },
-    { "source": "/ru/:path*", "destination": "/:path*", "permanent": true }
+    {
+      "source": "/ru/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/ru/:path*/",
+      "destination": "/:path*/",
+      "permanent": true
+    }
   ]
 }
