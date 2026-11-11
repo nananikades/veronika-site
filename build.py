@@ -14,6 +14,7 @@ mountains, underwater, architecture, thirst, film, travel, editorial,
 prints, about.
 """
 import html
+import json
 import os
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +28,12 @@ TIKTOK = "nananika.photographer"
 WHATSAPP = ""  # номер в формате 77001234567; пока пусто, кнопка WhatsApp скрыта
 # Сезонный баннер на главной. Чтобы убрать, поставьте SHOW_BANNER = False.
 SHOW_BANNER = True
+
+# Адрес сайта в интернете: нужен для поисковиков (canonical, sitemap, превью ссылок)
+SITE_URL = "https://nananika.vercel.app"
+# Коды подтверждения из Google Search Console и Яндекс Вебмастера (вставить, когда будут)
+GOOGLE_VERIFY = ""
+YANDEX_VERIFY = ""
 
 IG_DM = "https://ig.me/m/" + INSTAGRAM
 IG_URL = "https://www.instagram.com/" + INSTAGRAM + "/"
@@ -51,6 +58,15 @@ S = {
         "Вероника Ким, фотограф из Алматы: авторские портреты, чёрно-белая плёнка и ручная печать, съёмки в горах с дроном и под водой.",
         "Вероника Ким, алматылық фотограф: авторлық портреттер, ақ-қара таспа және қолмен басу, тауда дронмен және су астында түсірілім.",
         "Veronika Kim, a photographer based in Almaty: art portraits, black-and-white film and hand printing, mountain shoots with a drone, underwater photography."),
+    "seo_home": L(
+        "Veronika Kim (Вероника Ким) — фотограф в Алматы и Астане",
+        "Veronika Kim (Вероника Ким) — Алматы мен Астанадағы фотограф",
+        "Veronika Kim — photographer in Almaty and Astana, Kazakhstan"),
+    "seo_suffix": L(" · Veronika Kim, фотограф в Алматы", " · Veronika Kim, Алматыдағы фотограф",
+                    " · Veronika Kim, photographer in Almaty"),
+    "seo_sign": L("Вероника Ким (Veronika Kim), фотограф: Алматы, Астана, выездные съёмки.",
+                  "Вероника Ким (Veronika Kim), фотограф: Алматы, Астана, көшпелі түсірілімдер.",
+                  "Veronika Kim, photographer: Almaty, Astana and on location."),
     "menu": L("Меню", "Мәзір", "Menu"),
     "close": L("Закрыть", "Жабу", "Close"),
     "home": L("Главная", "Басты бет", "Home"),
@@ -317,6 +333,13 @@ class Ctx(object):
         self.path = path
         depth = (1 if lang_prefix(lang) else 0) + (len(path.split("/")) if path else 0)
         self.root = "../" * depth
+        self.desc = None    # описание страницы для поисковиков (берётся из вводного абзаца)
+        self.image = None   # картинка для превью ссылки (первое фото страницы)
+
+    def abs(self, path=None, lang=None):
+        """Полный адрес страницы в интернете."""
+        path = self.path if path is None else path
+        return SITE_URL + "/" + lang_prefix(lang or self.lang) + (path + "/" if path else "")
 
     def t(self, d):
         return d[self.lang]
@@ -331,6 +354,8 @@ def tile(c, g, i, ratio, alt, lightbox=True):
     files = photos(g)
     if files and i < len(files):
         src = c.root + "photos/" + g + "/" + files[i]
+        if c.image is None and not files[i].startswith("stock-"):
+            c.image = "photos/" + g + "/" + files[i]
         img = '<img src="%s" alt="%s" loading="lazy"%s>' % (
             e(src), e(alt), "" if lightbox else ' style="aspect-ratio:%s"' % ratio)
         st = " stock" if files[i].startswith("stock-") else ""  # временное фото из интернета
@@ -379,9 +404,156 @@ NAV = [("book", "book"), ("arch", "architecture"), ("art", "art"), ("shop", "sho
        ("contacts", "contacts")]
 
 
+OG_LOCALE = {"ru": "ru_RU", "kz": "kk_KZ", "en": "en_US"}
+PARENTS = {"book": "book", "art": "art"}
+
+
+def seo_head(c, title, full_title, desc, section):
+    """Всё, что читают поисковики и ИИ: адрес страницы, языковые версии, превью, структурированные данные."""
+    t = c.t
+    url = c.abs()
+    image = SITE_URL + "/" + (c.image or "assets/og.jpg")
+    tags = ['<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">',
+            '<link rel="canonical" href="%s">' % url]
+    for lg in LANGS:
+        tags.append('<link rel="alternate" hreflang="%s" href="%s">' % (HTML_LANG[lg], c.abs(lang=lg)))
+    tags.append('<link rel="alternate" hreflang="x-default" href="%s">' % c.abs(lang=LANGS[0]))
+    tags += [
+        '<meta property="og:type" content="website">',
+        '<meta property="og:site_name" content="Veronika Kim">',
+        '<meta property="og:locale" content="%s">' % OG_LOCALE[c.lang],
+        '<meta property="og:url" content="%s">' % url,
+        '<meta property="og:title" content="%s">' % e(full_title),
+        '<meta property="og:description" content="%s">' % e(desc),
+        '<meta property="og:image" content="%s">' % image,
+        '<meta name="twitter:card" content="summary_large_image">',
+        '<meta name="twitter:title" content="%s">' % e(full_title),
+        '<meta name="twitter:description" content="%s">' % e(desc),
+        '<meta name="twitter:image" content="%s">' % image,
+    ]
+    if GOOGLE_VERIFY:
+        tags.append('<meta name="google-site-verification" content="%s">' % GOOGLE_VERIFY)
+    if YANDEX_VERIFY:
+        tags.append('<meta name="yandex-verification" content="%s">' % YANDEX_VERIFY)
+
+    person = {
+        "@type": "Person", "@id": SITE_URL + "/#person",
+        "name": "Veronika Kim", "alternateName": ["Вероника Ким", "Ким Вероника"],
+        "jobTitle": t(L("Фотограф", "Фотограф", "Photographer")),
+        "description": t(S["desc"]), "url": SITE_URL + "/", "image": SITE_URL + "/assets/og.jpg",
+        "sameAs": [IG_URL, TT_URL],
+        "homeLocation": {"@type": "City", "name": "Almaty", "addressCountry": "KZ"},
+        "knowsAbout": ["portrait photography", "fine art photography", "black-and-white film photography",
+                       "darkroom printing", "drone photography", "underwater photography",
+                       "architecture and interior photography"],
+    }
+    business = {
+        "@type": "ProfessionalService", "@id": SITE_URL + "/#studio",
+        "name": "Veronika Kim Photography", "alternateName": "Вероника Ким, фотограф",
+        "url": SITE_URL + "/", "image": SITE_URL + "/assets/og.jpg", "description": t(S["desc"]),
+        "founder": {"@id": SITE_URL + "/#person"},
+        "address": {"@type": "PostalAddress", "addressLocality": "Almaty", "addressCountry": "KZ"},
+        "areaServed": [{"@type": "City", "name": "Almaty"}, {"@type": "City", "name": "Astana"},
+                       {"@type": "Country", "name": "Kazakhstan"}],
+        "sameAs": [IG_URL, TT_URL],
+        "availableLanguage": ["ru", "kk", "en"],
+    }
+    website = {"@type": "WebSite", "@id": SITE_URL + "/#site", "url": SITE_URL + "/", "name": "Veronika Kim",
+               "inLanguage": [HTML_LANG[lg] for lg in LANGS], "publisher": {"@id": SITE_URL + "/#person"}}
+    page = {"@type": "WebPage", "@id": url, "url": url, "name": full_title, "description": desc,
+            "inLanguage": HTML_LANG[c.lang], "isPartOf": {"@id": SITE_URL + "/#site"},
+            "about": {"@id": SITE_URL + "/#person"}, "primaryImageOfPage": image}
+    graph = [website, person, business, page]
+    if c.path:
+        crumbs = [(t(S["home"]), c.abs(""))]
+        parts = c.path.split("/")
+        if len(parts) > 1 and parts[0] in PARENTS:
+            crumbs.append((t(S[PARENTS[parts[0]]]), c.abs(parts[0])))
+        crumbs.append((title, url))
+        graph.append({"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumbs)]})
+        if c.path.startswith("book/") or c.path == "architecture":
+            graph.append({"@type": "Service", "name": title, "description": desc, "url": url,
+                          "serviceType": title, "provider": {"@id": SITE_URL + "/#studio"},
+                          "areaServed": ["Almaty", "Astana"]})
+    tags.append('<script type="application/ld+json">%s</script>' % json.dumps(
+        {"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False).replace("</", "<\\/"))
+    return "\n".join(tags)
+
+
+def seo_files():
+    """sitemap.xml, robots.txt, llms.txt, картинка для превью и значок сайта."""
+    from PIL import Image
+    pages = sorted({os.path.relpath(d, SITE).replace(os.sep, "/") for d, _, fs in os.walk(SITE)
+                    if "index.html" in fs})
+    ru = [("" if p == "." else p) for p in pages if not (p + "/").startswith(("kz/", "en/"))]
+    out = ['<?xml version="1.0" encoding="UTF-8"?>',
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
+    today = time.strftime("%Y-%m-%d")
+    for path in ru:
+        for lg in LANGS:
+            c = Ctx(lg, path)
+            out.append("<url><loc>%s</loc><lastmod>%s</lastmod>" % (c.abs(), today))
+            for alt in LANGS:
+                out.append('<xhtml:link rel="alternate" hreflang="%s" href="%s"/>' % (HTML_LANG[alt], c.abs(lang=alt)))
+            out.append("</url>")
+    out.append("</urlset>")
+    with open(os.path.join(SITE, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write("\n".join(out) + "\n")
+
+    bots = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot", "Claude-User",
+            "PerplexityBot", "Perplexity-User", "Google-Extended", "Applebot-Extended", "YandexBot", "Bingbot"]
+    robots = "User-agent: *\nAllow: /\n\n" + "".join("User-agent: %s\nAllow: /\n\n" % b for b in bots)
+    robots += "Sitemap: %s/sitemap.xml\n" % SITE_URL
+    with open(os.path.join(SITE, "robots.txt"), "w", encoding="utf-8") as f:
+        f.write(robots)
+
+    ll = ["# Veronika Kim (Вероника Ким) — фотограф, Алматы и Астана, Казахстан", "",
+          "> " + S["desc"]["ru"], "> " + S["desc"]["en"], "",
+          "Вероника Ким снимает с 2017 года: цифра, чёрно-белая плёнка среднего формата (Rolleiflex, Mamiya), "
+          "дрон и подводная съёмка. Своя проявочная: проявляет плёнку и печатает отпечатки вручную. "
+          "Работает в Алматы и Астане, выезжает на съёмки в другие города и страны. "
+          "Не снимает большие свадьбы и людные мероприятия.", "",
+          "Запись и стоимость: личным сообщением в Instagram @%s (%s). Стоимость сообщается по запросу." % (INSTAGRAM, IG_URL),
+          "Языки сайта: русский (/), қазақша (/kz/), English (/en/).", "",
+          "## Съёмки на заказ / Book a shoot", ""]
+    for x in SERVICES:
+        ll.append("- [%s](%s): %s" % (x["title"]["ru"], Ctx("ru", "book/" + x["slug"]).abs(), x["lead"]["ru"]))
+    ll.append("- [%s](%s): %s" % (S["arch"]["ru"], Ctx("ru", "architecture").abs(), ARCH["lead"]["ru"]))
+    ll += ["", "## Авторские проекты / Personal work", ""]
+    for x in ART:
+        ll.append("- [%s](%s): %s" % (x["title"]["ru"], Ctx("ru", "art/" + x["slug"]).abs(), x["lead"]["ru"]))
+    ll += ["", "## Ещё", "",
+           "- [Магазин](%s): отпечатки из даркрума, принты для интерьера, сертификаты" % Ctx("ru", "shop").abs(),
+           "- [Обо мне](%s)" % Ctx("ru", "about").abs(),
+           "- [Контакты](%s)" % Ctx("ru", "contacts").abs(),
+           "- [English version](%s)" % Ctx("en", "").abs(),
+           "- Instagram: %s" % IG_URL, "- TikTok: %s" % TT_URL, ""]
+    with open(os.path.join(SITE, "llms.txt"), "w", encoding="utf-8") as f:
+        f.write("\n".join(ll))
+
+    # Превью ссылки 1200×630 из обложки
+    files = photos("home")
+    if files:
+        im = Image.open(os.path.join(SITE, "photos", "home", files[0])).convert("RGB")
+        w, h = im.size
+        nh = int(w * 630 / 1200.0)
+        top = max(0, min(h - nh, int(h * .44 - nh * .45)))
+        im.crop((0, top, w, top + nh)).resize((1200, 630), Image.LANCZOS).save(
+            os.path.join(SITE, "assets", "og.jpg"), quality=86)
+    with open(os.path.join(SITE, "assets", "favicon.svg"), "w", encoding="utf-8") as f:
+        f.write('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#111112"/>'
+                '<text x="32" y="43" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" '
+                'font-size="30" letter-spacing="-2" fill="#FA8030">VK</text></svg>')
+
+
 def layout(c, title, body, section=""):
     t = c.t
-    full_title = (title + " · " if title else "") + t(S["name"]) + (". " + t(S["role"]) if not title else "")
+    full_title = (title + t(S["seo_suffix"])) if title else t(S["seo_home"])
+    desc = t(S["desc"])
+    if c.desc:
+        desc = c.desc.rstrip(". ") + ". " + t(S["seo_sign"])
+    seo = seo_head(c, title, full_title, desc, section)
     langs = "".join('<a href="%s" lang="%s"%s>%s</a>' % (
         c.url(c.path, lg), HTML_LANG[lg], ' aria-current="true"' if lg == c.lang else "", lg) for lg in LANGS)
     main_links = "".join('<a href="%s"%s>%s</a>' % (
@@ -396,9 +568,9 @@ def layout(c, title, body, section=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<meta property="og:title" content="{title}">
-<meta property="og:description" content="{desc}">
 <meta name="theme-color" content="#111112">
+{seo}
+<link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Unbounded:wght@900&display=swap" rel="stylesheet">
@@ -434,7 +606,7 @@ def layout(c, title, body, section=""):
 </body>
 </html>
 """.format(
-        hl=HTML_LANG[c.lang], ver=VER, title=e(full_title), desc=e(t(S["desc"])), root=c.root, home=c.url(""),
+        hl=HTML_LANG[c.lang], ver=VER, title=e(full_title), desc=e(desc), seo=seo, root=c.root, home=c.url(""),
         name=e(t(S["name"])), mono=e(t(S["name1"])[0] + "—" + t(S["name2"])[0]), langs=langs,
         menu=t(S["menu"]), close=t(S["close"]), main_links=main_links, sub=sub, body=body,
         l_booking=t(S["booking"]), ig_dm=IG_DM, write_ig=t(S["write_ig"]), wa=wa,
@@ -456,6 +628,7 @@ def page_head(c, title, lead, eyebrow="", eyebrow_path=None):
     if eyebrow:
         inner = '<a href="%s">%s</a>' % (c.url(eyebrow_path), e(eyebrow)) if eyebrow_path else e(eyebrow)
         eb = '<p class="eyebrow">%s</p>' % inner
+    c.desc = lead
     back = '<a class="back" href="%s">← %s</a>' % (c.url(eyebrow_path or ""), c.t(S["prev"]))
     return '<header class="page-head">%s%s<h1>%s</h1><p class="lead">%s</p></header>' % (back, eb, e(title), e(lead))
 
@@ -644,6 +817,7 @@ def contacts(lang):
     c = Ctx(lang, "contacts")
     t = c.t
     body = page_head(c, t(S["contacts"]), t(S["price_note"]))
+    c.desc = t(S["contacts"]) + ": Instagram @" + INSTAGRAM + ", TikTok @" + TIKTOK + ". " + t(S["where_text"])
     body += ('<section class="split" style="padding-top:0"><div><h2 class="label">Instagram</h2>'
              '<p class="big"><a href="%s" target="_blank" rel="noopener">@%s</a></p>%s</div>'
              '<div><h2 class="label">TikTok</h2><p class="big"><a href="%s" target="_blank" rel="noopener">@%s</a></p>'
@@ -667,6 +841,7 @@ def main():
         shop(lang)
         about(lang)
         contacts(lang)
+    seo_files()
     n = sum(len(fs) for _, _, fs in os.walk(SITE) if any(x.endswith(".html") for x in fs))
     print("Готово: site/ (%d файлов)" % n)
 
