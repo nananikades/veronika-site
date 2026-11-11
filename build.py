@@ -306,18 +306,25 @@ def photos(g):
     return _photo_cache[g]
 
 
+def lang_prefix(lang):
+    """Русская версия живёт в корне сайта, остальные языки — в /kz/ и /en/."""
+    return "" if lang == LANGS[0] else lang + "/"
+
+
 class Ctx(object):
     def __init__(self, lang, path):
         self.lang = lang
         self.path = path
-        depth = 1 + (len(path.split("/")) if path else 0)
+        depth = (1 if lang_prefix(lang) else 0) + (len(path.split("/")) if path else 0)
         self.root = "../" * depth
 
     def t(self, d):
         return d[self.lang]
 
     def url(self, path, lang=None):
-        return self.root + (lang or self.lang) + "/" + (path + "/" if path else "") + "index.html"
+        # Чистые адреса: без index.html, с косой чертой на конце
+        u = self.root + lang_prefix(lang or self.lang) + (path + "/" if path else "")
+        return u or "./"
 
 
 def tile(c, g, i, ratio, alt, lightbox=True):
@@ -438,7 +445,7 @@ def layout(c, title, body, section=""):
 
 
 def write(c, title, body, section=""):
-    out = os.path.join(SITE, c.lang, *(c.path.split("/") if c.path else []))
+    out = os.path.join(SITE, lang_prefix(c.lang).strip("/"), *(c.path.split("/") if c.path else []))
     os.makedirs(out, exist_ok=True)
     with open(os.path.join(out, "index.html"), "w", encoding="utf-8") as f:
         f.write(layout(c, title, body, section))
@@ -660,11 +667,6 @@ def main():
         shop(lang)
         about(lang)
         contacts(lang)
-    with open(os.path.join(SITE, "index.html"), "w", encoding="utf-8") as f:
-        f.write('<!doctype html><html lang="ru"><head><meta charset="utf-8">'
-                '<meta http-equiv="refresh" content="0; url=ru/index.html">'
-                '<title>Вероника Ким</title></head><body style="background:#111112">'
-                '<a href="ru/index.html" style="color:#eee">Вероника Ким</a></body></html>')
     n = sum(len(fs) for _, _, fs in os.walk(SITE) if any(x.endswith(".html") for x in fs))
     print("Готово: site/ (%d файлов)" % n)
 
