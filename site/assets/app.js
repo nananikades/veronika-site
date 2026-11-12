@@ -111,7 +111,7 @@
       }
     }
 
-    var queued = false, wasPaused = null, lastP = -1;
+    var queued = false, wasPaused = null, wasTheme = null, lastP = -1;
     var splashTile = home.querySelector('.splash .tile');
     var vh = window.innerHeight, portrait = vh > window.innerWidth;
     var startY = 0;   // прокрутка, на которой текст показывается снизу
@@ -136,6 +136,9 @@
         home.classList.toggle('is-content', np);
         if (!np) start();
       }
+      // Как у Levitt: белый фон, пока плывут кадры; цвет пары, когда текст наехал на экран на 10%
+      var th = p > .1;
+      if (th !== wasTheme) { wasTheme = th; document.body.classList.toggle('is-theme', th); }
       if (p === lastP) return;
       lastP = p;
       if (portrait) {

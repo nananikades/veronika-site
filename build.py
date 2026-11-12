@@ -568,7 +568,15 @@ def layout(c, title, body, section=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<meta name="theme-color" content="#111112">
+<meta name="theme-color" content="#161214">
+<script>
+/* Как у Levitt: при каждой загрузке случайная пара цветов (текст и фон) и случайный цвет имени на главной.
+   Для примерки: ?theme=1..8 и ?logo=1..4 */
+!function(){{var P=[["#FA8030","#161214"],["#F1B5C2","#392E2B"],["#152D22","#F3AF87"],["#F2E6D8","#3E2AB4"],["#2E2A1E","#F07082"],["#7A2410","#75DFB5"],["#FE6BF7","#1C008C"],["#DBF863","#3E5453"]],
+L=["#FA8030","#E63E3E","#E676B6","#8FD3F4"],q=location.search,r=function(a,k){{var m=new RegExp("[?&]"+k+"=([0-9])").exec(q),i=m?m[1]-1:-1;return a[i]||a[Math.floor(Math.random()*a.length)]}},
+p=r(P,"theme"),d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--logo",r(L,"logo"));
+var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}}();
+</script>
 {seo}
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -692,7 +700,7 @@ def home(lang):
 <div class="home" id="home">
 <section class="stage">
   <div class="splash">{cover}</div>
-  <h1 class="wordmark"><img src="{logo}" alt="{name}" width="1692" height="678"></h1>
+  <h1 class="wordmark"><span class="wm" role="img" aria-label="{name}" style="-webkit-mask-image:url({logo});mask-image:url({logo})"></span></h1>
   <div class="drift">{scatter}</div>
 </section>
 <div class="home-content">
