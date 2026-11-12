@@ -100,7 +100,15 @@
       home.querySelector('.splash').addEventListener('click', go);  // примерка: дольше обычного, 8 секунд
       setTimeout(go, 8000);
     } else {
-      setTimeout(go, seen ? 300 : 3000);
+      // Обложка держится не меньше пары секунд: отсчёт идёт с момента, когда фото загрузилось
+      var hold = seen ? 2500 : 4500;
+      if (simg && !simg.complete) {
+        simg.addEventListener('load', function () { setTimeout(go, hold); });
+        simg.addEventListener('error', go);
+        setTimeout(go, hold + 6000);
+      } else {
+        setTimeout(go, hold);
+      }
     }
 
     var queued = false, wasPaused = null, lastP = -1;
