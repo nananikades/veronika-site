@@ -21,8 +21,8 @@ body {
   transition: background-color 1s;
 }
 /* Главная как у Levitt: кадры плывут по белому, фон становится цветом пары, когда наезжает текст */
-body:has(#home) { background: #fff; }
-body:has(#home).is-theme { background: var(--bg); }
+body.is-home { background: #fff; }
+body.is-home.is-theme { background: var(--bg); }
 a { color: inherit; text-decoration: none; }
 img { display: block; width: 100%; height: auto; }
 h1, h2, h3, p, ul, ol { margin: 0; padding: 0; }
@@ -81,12 +81,8 @@ ul, ol { list-style: none; }
   will-change: transform, opacity;
 }
 .wordmark span { display: block; }
-/* Имя одним цветом: форма букв из картинки (маска), цвет случайный при каждой загрузке */
-.wordmark .wm {
-  display: block; width: min(calc(100vw - var(--pad) * 1.2), 86svh * 2.4956); aspect-ratio: 1692 / 678;
-  background: var(--logo); -webkit-mask: no-repeat 0 0 / 100% 100%; mask: no-repeat 0 0 / 100% 100%;
-  transition: background-color .5s;
-}
+/* Имя одним цветом: 4 готовые картинки (wordmark-1..4.png), какая показывается, решает скрипт в <head> */
+.wordmark img { display: block; width: min(calc(100vw - var(--pad) * 1.2), 86svh * 2.4956); height: auto; }
 .drift { position: absolute; inset: 0; }
 .drift-item { position: absolute; left: 0; top: 0; width: 18%; overflow: hidden; will-change: transform; }
 .drift-item:nth-of-type(2n) { z-index: 200; }
@@ -258,7 +254,7 @@ a.tile:hover img { transform: scale(1.03); }
     --len: min(calc(49vw * 2.4956), calc(100svh - 28px)); width: calc(var(--len) / 2.4956); padding: 0; left: 0;
   }
   /* Картинка повёрнута: вместе с поворотом заголовка читается снизу вверх */
-  .wordmark .wm {
+  .wordmark img {
     position: absolute; left: 0; top: 10px; width: var(--len); max-width: none;
     transform-origin: 0 0; transform: translateX(calc(var(--len) / 2.4956)) rotate(90deg);
   }

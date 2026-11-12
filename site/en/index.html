@@ -16,7 +16,7 @@ pick=function(n,k){var m=new RegExp("[?&]"+k+"=([0-9])").exec(q);if(m&&m[1]>0&&m
 var st={};try{st=JSON.parse(localStorage.getItem("vk-"+k))||{}}catch(e){}var bag=st.bag||[],last=st.last;
 if(!bag.length){for(var j=0;j<n;j++)if(j!==last)bag.push(j);}
 var i=bag.splice(Math.floor(Math.random()*bag.length),1)[0];try{localStorage.setItem("vk-"+k,JSON.stringify({bag:bag,last:i}))}catch(e){}return i},
-p=P[pick(P.length,"theme")],d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--c3",p[2]);d.setProperty("--on3",p[3]||p[1]);var h=parseInt(p[1].slice(1),16),lum=((h>>16)*299+((h>>8&255)*587)+(h&255)*114)/1000;d.colorScheme=lum>140?"only light":"dark";var cs=document.querySelector('meta[name="color-scheme"]');if(cs)cs.content=d.colorScheme;d.setProperty("--logo",L[pick(L.length,"logo")]);
+p=P[pick(P.length,"theme")],d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--c3",p[2]);d.setProperty("--on3",p[3]||p[1]);var h=parseInt(p[1].slice(1),16),lum=((h>>16)*299+((h>>8&255)*587)+(h&255)*114)/1000;d.colorScheme=lum>140?"only light":"dark";var cs=document.querySelector('meta[name="color-scheme"]');if(cs)cs.content=d.colorScheme;var li=pick(L.length,"logo");d.setProperty("--logo",L[li]);document.documentElement.setAttribute("data-logo",li+1);
 var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}();
 </script>
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -41,9 +41,9 @@ var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}();
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Unbounded:wght@900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=1794483489">
+<link rel="stylesheet" href="../assets/style.css?v=1794485304">
 </head>
-<body id="top">
+<body id="top" class="is-home">
 <header class="top">
   <a class="mono" href="../en/" aria-label="Veronika Kim">V—K</a>
   <div class="top-right">
@@ -60,9 +60,9 @@ var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}();
 
 <div class="home" id="home">
 <section class="stage">
-  <div class="splash"><picture class="tile"><source media="(max-width: 760px)" srcset="../photos/home/02.jpg?v=1794483489"><img src="../photos/home/01.jpg?v=1794483489" alt="Veronika Kim"></picture></div>
-  <h1 class="wordmark"><span class="wm" role="img" aria-label="Veronika Kim" style="-webkit-mask-image:url(../assets/wordmark.png?v=1794483489);mask-image:url(../assets/wordmark.png?v=1794483489)"></span></h1>
-  <div class="drift"><div class="drift-item"><a href="../en/art/editorial/"><img src="../photos/drift/editorial.jpg?v=1794483489" width="437" height="560" alt="Art portrait" decoding="async"></a></div><div class="drift-item"><a href="../en/book/mountains/"><img src="../photos/drift/mountains.jpg?v=1794483489" width="560" height="373" alt="Mountains &amp; drone" decoding="async"></a></div><div class="drift-item"><a href="../en/book/kids/"><img src="../photos/drift/kids.jpg?v=1794483489" width="373" height="560" alt="Children" decoding="async"></a></div><div class="drift-item"><a href="../en/book/underwater/"><img src="../photos/drift/underwater.jpg?v=1794483489" width="448" height="560" alt="Underwater" decoding="async"></a></div><div class="drift-item"><a href="../en/book/portrait/"><img src="../photos/drift/portrait.jpg?v=1794483489" width="420" height="560" alt="Portrait" decoding="async"></a></div><div class="drift-item"><a href="../en/architecture/"><img src="../photos/drift/architecture.jpg?v=1794483489" width="560" height="373" alt="Architecture &amp; drone" decoding="async"></a></div><div class="drift-item"><a href="../en/book/love-story/"><img src="../photos/drift/love-story.jpg?v=1794483489" width="560" height="373" alt="Love story" decoding="async"></a></div><div class="drift-item"><a href="../en/art/travel/"><img src="../photos/drift/travel.jpg?v=1794483489" width="560" height="373" alt="Travel" decoding="async"></a></div></div>
+  <div class="splash"><picture class="tile"><source media="(max-width: 760px)" srcset="../photos/home/02.jpg?v=1794485304"><img src="../photos/home/01.jpg?v=1794485304" alt="Veronika Kim"></picture></div>
+  <h1 class="wordmark"><img data-src="../assets/wordmark-1.png?v=1794485304" alt="Veronika Kim" width="1692" height="678"><script>!function(i){i.src=i.getAttribute("data-src").replace("-1.","-"+(document.documentElement.getAttribute("data-logo")||1)+".")}(document.currentScript.previousElementSibling)</script><noscript><img src="../assets/wordmark-1.png?v=1794485304" alt="Veronika Kim" width="1692" height="678"></noscript></h1>
+  <div class="drift"><div class="drift-item"><a href="../en/art/editorial/"><img src="../photos/drift/editorial.jpg?v=1794485304" width="437" height="560" alt="Art portrait" decoding="async"></a></div><div class="drift-item"><a href="../en/book/mountains/"><img src="../photos/drift/mountains.jpg?v=1794485304" width="560" height="373" alt="Mountains &amp; drone" decoding="async"></a></div><div class="drift-item"><a href="../en/book/kids/"><img src="../photos/drift/kids.jpg?v=1794485304" width="373" height="560" alt="Children" decoding="async"></a></div><div class="drift-item"><a href="../en/book/underwater/"><img src="../photos/drift/underwater.jpg?v=1794485304" width="448" height="560" alt="Underwater" decoding="async"></a></div><div class="drift-item"><a href="../en/book/portrait/"><img src="../photos/drift/portrait.jpg?v=1794485304" width="420" height="560" alt="Portrait" decoding="async"></a></div><div class="drift-item"><a href="../en/architecture/"><img src="../photos/drift/architecture.jpg?v=1794485304" width="560" height="373" alt="Architecture &amp; drone" decoding="async"></a></div><div class="drift-item"><a href="../en/book/love-story/"><img src="../photos/drift/love-story.jpg?v=1794485304" width="560" height="373" alt="Love story" decoding="async"></a></div><div class="drift-item"><a href="../en/art/travel/"><img src="../photos/drift/travel.jpg?v=1794485304" width="560" height="373" alt="Travel" decoding="async"></a></div></div>
 </section>
 <div class="home-content">
 <p class="statement">I don't need perfect people. <em>I'm interested in real ones.</em></p>
@@ -89,6 +89,6 @@ var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}();
   <div class="foot-bottom"><span>© 2026 Veronika Kim. All rights reserved</span><a href="#top">Back to top</a></div>
 </footer>
 <div class="lb" role="dialog" aria-modal="true"><span class="c"></span><button class="x">Close</button><button class="p">← Prev</button><img alt=""><button class="nx">Next →</button></div>
-<script src="../assets/app.js?v=1794483489"></script>
+<script src="../assets/app.js?v=1794485304"></script>
 </body>
 </html>

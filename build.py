@@ -579,7 +579,7 @@ pick=function(n,k){{var m=new RegExp("[?&]"+k+"=([0-9])").exec(q);if(m&&m[1]>0&&
 var st={{}};try{{st=JSON.parse(localStorage.getItem("vk-"+k))||{{}}}}catch(e){{}}var bag=st.bag||[],last=st.last;
 if(!bag.length){{for(var j=0;j<n;j++)if(j!==last)bag.push(j);}}
 var i=bag.splice(Math.floor(Math.random()*bag.length),1)[0];try{{localStorage.setItem("vk-"+k,JSON.stringify({{bag:bag,last:i}}))}}catch(e){{}}return i}},
-p=P[pick(P.length,"theme")],d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--c3",p[2]);d.setProperty("--on3",p[3]||p[1]);var h=parseInt(p[1].slice(1),16),lum=((h>>16)*299+((h>>8&255)*587)+(h&255)*114)/1000;d.colorScheme=lum>140?"only light":"dark";var cs=document.querySelector('meta[name="color-scheme"]');if(cs)cs.content=d.colorScheme;d.setProperty("--logo",L[pick(L.length,"logo")]);
+p=P[pick(P.length,"theme")],d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--c3",p[2]);d.setProperty("--on3",p[3]||p[1]);var h=parseInt(p[1].slice(1),16),lum=((h>>16)*299+((h>>8&255)*587)+(h&255)*114)/1000;d.colorScheme=lum>140?"only light":"dark";var cs=document.querySelector('meta[name="color-scheme"]');if(cs)cs.content=d.colorScheme;var li=pick(L.length,"logo");d.setProperty("--logo",L[li]);document.documentElement.setAttribute("data-logo",li+1);
 var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}}();
 </script>
 {seo}
@@ -589,7 +589,7 @@ var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}}()
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Unbounded:wght@900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}assets/style.css?v={ver}">
 </head>
-<body id="top">
+<body id="top"{bcls}>
 <header class="top">
   <a class="mono" href="{home}" aria-label="{name}">{mono}</a>
   <div class="top-right">
@@ -621,7 +621,7 @@ var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}}()
 """.format(
         hl=HTML_LANG[c.lang], ver=VER, title=e(full_title), desc=e(desc), seo=seo, root=c.root, home=c.url(""),
         name=e(t(S["name"])), mono=e(t(S["name1"])[0] + "—" + t(S["name2"])[0]), langs=langs,
-        menu=t(S["menu"]), close=t(S["close"]), main_links=main_links, sub=sub, body=body,
+        bcls=' class="is-home"' if 'id="home"' in body else "", menu=t(S["menu"]), close=t(S["close"]), main_links=main_links, sub=sub, body=body,
         l_booking=t(S["booking"]), ig_dm=IG_DM, write_ig=t(S["write_ig"]), wa=wa,
         l_social=t(S["social"]), ig=IG_URL, tt=TT_URL, l_where=t(S["where"]), where=t(S["where_text"]),
         l_menu=t(S["menu"]),
@@ -705,7 +705,7 @@ def home(lang):
 <div class="home" id="home">
 <section class="stage">
   <div class="splash">{cover}</div>
-  <h1 class="wordmark"><span class="wm" role="img" aria-label="{name}" style="-webkit-mask-image:url({logo});mask-image:url({logo})"></span></h1>
+  <h1 class="wordmark"><img data-src="{logo}" alt="{name}" width="1692" height="678"><script>!function(i){{i.src=i.getAttribute("data-src").replace("-1.","-"+(document.documentElement.getAttribute("data-logo")||1)+".")}}(document.currentScript.previousElementSibling)</script><noscript><img src="{logo}" alt="{name}" width="1692" height="678"></noscript></h1>
   <div class="drift">{scatter}</div>
 </section>
 <div class="home-content">
@@ -723,7 +723,7 @@ def home(lang):
 </div>
 """.format(
         cover=cover_html(c),
-        scatter="".join(scatter), name=e(t(S["name"])), logo=e(c.root + "assets/wordmark.png?v=" + VER),
+        scatter="".join(scatter), name=e(t(S["name"])), logo=e(c.root + "assets/wordmark-1.png?v=" + VER),
         statement=t(S["statement"]), banner=banner, all=t(S["all"]),
         book=t(S["book"]), book_url=c.url("book"),
         book_rows=rows(c, [("book/" + s["slug"], t(s["title"]), t(s["lead"])) for s in SERVICES]
@@ -841,7 +841,25 @@ def contacts(lang):
     write(c, t(S["contacts"]), body, "contacts")
 
 
+LOGO_COLORS = ["#FA8030", "#E63E3E", "#E676B6", "#8FD3F4"]  # те же, что в L в <head>
+
+
+def logo_files():
+    """Имя одним цветом: форма букв из wordmark.png, залитая каждым цветом."""
+    from PIL import Image
+    src = os.path.join(SITE, "assets", "wordmark.png")
+    a = Image.open(src).convert("RGBA").getchannel("A")
+    for i, col in enumerate(LOGO_COLORS, 1):
+        out = os.path.join(SITE, "assets", "wordmark-%d.png" % i)
+        if os.path.exists(out) and os.path.getmtime(out) >= os.path.getmtime(src):
+            continue
+        im = Image.new("RGBA", a.size, col)
+        im.putalpha(a)
+        im.save(out, optimize=True)
+
+
 def main():
+    logo_files()
     for lang in LANGS:
         home(lang)
         book_index(lang)
