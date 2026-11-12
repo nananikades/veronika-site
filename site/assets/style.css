@@ -1,10 +1,11 @@
 /* Вероника Ким — портфолио. Токены в духе shadcn/ui + Radix (тёмная шкала). */
 :root {
-  /* Пара цветов выбирается случайно при загрузке (скрипт в <head>): --c1 текст и имя, --c2 фон */
-  --c1: #FA8030; --c2: #161214; --logo: #FA8030;
+  /* Цвета выбираются при загрузке (скрипт в <head>): --c1 текст, --c2 фон, --c3 наведение */
+  --c1: #EEEEEC; --c2: #111112; --c3: #FA8030; --on3: #111112; --logo: #FA8030;
+  color-scheme: dark;
   --bg: var(--c2);
   --fg: var(--c1);
-  --accent: var(--c1);
+  --accent: var(--c3);  /* цвет наведения и акцентов */
   --panel: color-mix(in srgb, var(--c1) 12%, var(--c2));
   --line: color-mix(in srgb, var(--c1) 28%, var(--c2));
   --muted: color-mix(in srgb, var(--c1) 68%, var(--c2));
@@ -139,11 +140,11 @@ a.tile:hover img { transform: scale(1.03); }
 .banner {
   margin: 0 var(--pad); padding: clamp(20px, 3vw, 40px);
   display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: end;
-  border-radius: var(--radius); color: var(--c2); background: var(--c1);
+  border-radius: var(--radius); color: var(--on3); background: var(--c3);
 }
-.banner .label { color: color-mix(in srgb, var(--c2) 70%, transparent); }
-.banner .btn { background: var(--c2); color: var(--c1); border-color: var(--c2); }
-.banner .btn:hover { background: transparent; color: var(--c2); }
+.banner .label { color: color-mix(in srgb, var(--on3) 70%, transparent); }
+.banner .btn { background: var(--on3); color: var(--c3); border-color: var(--on3); }
+.banner .btn:hover { background: transparent; color: var(--on3); }
 
 /* ── Списки разделов ───────────────────────────────── */
 .rows { border-top: 1px solid var(--line); margin: 0 var(--pad); }

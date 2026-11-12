@@ -568,13 +568,18 @@ def layout(c, title, body, section=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<meta name="theme-color" content="#161214">
+<meta name="theme-color" content="#111112">
+<meta name="color-scheme" content="dark">
 <script>
-/* Как у Levitt: при каждой загрузке случайная пара цветов (текст и фон) и случайный цвет имени на главной.
-   Для примерки: ?theme=1..8 и ?logo=1..4 */
-!function(){{var P=[["#FA8030","#161214"],["#F1B5C2","#392E2B"],["#152D22","#F3AF87"],["#F2E6D8","#3E2AB4"],["#2E2A1E","#F07082"],["#7A2410","#75DFB5"],["#FE6BF7","#1C008C"],["#DBF863","#3E5453"]],
-L=["#FA8030","#E63E3E","#E676B6","#8FD3F4"],q=location.search,r=function(a,k){{var m=new RegExp("[?&]"+k+"=([0-9])").exec(q),i=m?m[1]-1:-1;return a[i]||a[Math.floor(Math.random()*a.length)]}},
-p=r(P,"theme"),d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--logo",r(L,"logo"));
+/* Как у Levitt: при каждой загрузке новые цвета (текст, фон, наведение, текст на плашке) и новый цвет имени на главной.
+   Цвета не повторяются, пока не покажутся все. Для примерки: ?theme=1..8 и ?logo=1..4 */
+!function(){{var P=[["#EEEEEC","#111112","#FA8030"],["#F1B5C2","#392E2B","#FA8030"],["#152D22","#F3AF87","#B0122A"],["#F2E6D8","#3E2AB4","#DBF863"],["#2E2A1E","#F07082","#FFFFFF","#2E2A1E"],["#7A2410","#75DFB5","#3E2AB4"],["#FE6BF7","#1C008C","#DBF863"],["#DBF863","#3E5453","#F1B5C2"]],
+L=["#FA8030","#E63E3E","#E676B6","#8FD3F4"],q=location.search,
+pick=function(n,k){{var m=new RegExp("[?&]"+k+"=([0-9])").exec(q);if(m&&m[1]>0&&m[1]<=n)return m[1]-1;
+var st={{}};try{{st=JSON.parse(localStorage.getItem("vk-"+k))||{{}}}}catch(e){{}}var bag=st.bag||[],last=st.last;
+if(!bag.length){{for(var j=0;j<n;j++)if(j!==last)bag.push(j);}}
+var i=bag.splice(Math.floor(Math.random()*bag.length),1)[0];try{{localStorage.setItem("vk-"+k,JSON.stringify({{bag:bag,last:i}}))}}catch(e){{}}return i}},
+p=P[pick(P.length,"theme")],d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--c3",p[2]);d.setProperty("--on3",p[3]||p[1]);var h=parseInt(p[1].slice(1),16),lum=((h>>16)*299+((h>>8&255)*587)+(h&255)*114)/1000;d.colorScheme=lum>140?"only light":"dark";var cs=document.querySelector('meta[name="color-scheme"]');if(cs)cs.content=d.colorScheme;d.setProperty("--logo",L[pick(L.length,"logo")]);
 var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}}();
 </script>
 {seo}
