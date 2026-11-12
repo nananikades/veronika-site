@@ -7,6 +7,7 @@
     btn.setAttribute('aria-expanded', open);
     btn.textContent = open ? btn.dataset.close : btn.dataset.open;
     document.body.style.overflow = open ? 'hidden' : '';
+    document.body.classList.toggle('menu-open', open);
   }
   btn.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
 
@@ -142,7 +143,7 @@
       if (p === lastP) return;
       lastP = p;
       if (portrait) {
-        mark.style.transform = 'translate3d(' + (-50 * p).toFixed(2) + 'vw,0,0) rotate(180deg)';
+        mark.style.transform = 'translate3d(' + (-50 * p).toFixed(2) + 'vw,0,0)';
         mark.style.opacity = (1 - p).toFixed(3);
         mark.style.visibility = p >= 1 ? 'hidden' : '';
       } else {

@@ -705,7 +705,7 @@ def home(lang):
 <div class="home" id="home">
 <section class="stage">
   <div class="splash">{cover}</div>
-  <h1 class="wordmark"><img data-src="{logo}" alt="{name}" width="1692" height="678"><script>!function(i){{i.src=i.getAttribute("data-src").replace("-1.","-"+(document.documentElement.getAttribute("data-logo")||1)+".")}}(document.currentScript.previousElementSibling)</script><noscript><img src="{logo}" alt="{name}" width="1692" height="678"></noscript></h1>
+  <h1 class="wordmark"><picture><source media="(max-width: 760px)" data-srcset="{logo_v}" width="678" height="1692"><img data-src="{logo}" alt="{name}" width="1692" height="678"></picture><script>!function(p){{var n=document.documentElement.getAttribute("data-logo")||1,s=p.firstChild,i=p.lastChild;s.srcset=s.getAttribute("data-srcset").replace("-v1.","-v"+n+".");i.src=i.getAttribute("data-src").replace("-1.","-"+n+".")}}(document.currentScript.previousElementSibling)</script><noscript><img src="{logo}" alt="{name}" width="1692" height="678"></noscript></h1>
   <div class="drift">{scatter}</div>
 </section>
 <div class="home-content">
@@ -723,7 +723,7 @@ def home(lang):
 </div>
 """.format(
         cover=cover_html(c),
-        scatter="".join(scatter), name=e(t(S["name"])), logo=e(c.root + "assets/wordmark-1.png?v=" + VER),
+        scatter="".join(scatter), name=e(t(S["name"])), logo=e(c.root + "assets/wordmark-1.png?v=" + VER), logo_v=e(c.root + "assets/wordmark-v1.png?v=" + VER),
         statement=t(S["statement"]), banner=banner, all=t(S["all"]),
         book=t(S["book"]), book_url=c.url("book"),
         book_rows=rows(c, [("book/" + s["slug"], t(s["title"]), t(s["lead"])) for s in SERVICES]
@@ -851,11 +851,14 @@ def logo_files():
     a = Image.open(src).convert("RGBA").getchannel("A")
     for i, col in enumerate(LOGO_COLORS, 1):
         out = os.path.join(SITE, "assets", "wordmark-%d.png" % i)
-        if os.path.exists(out) and os.path.getmtime(out) >= os.path.getmtime(src):
+        vout = os.path.join(SITE, "assets", "wordmark-v%d.png" % i)
+        if os.path.exists(vout) and os.path.getmtime(vout) >= os.path.getmtime(src):
             continue
         im = Image.new("RGBA", a.size, col)
         im.putalpha(a)
         im.save(out, optimize=True)
+        # для телефона: уже повёрнутая картинка, читается снизу вверх (браузер ничего не вращает)
+        im.rotate(90, expand=True).save(os.path.join(SITE, "assets", "wordmark-v%d.png" % i), optimize=True)
 
 
 def main():

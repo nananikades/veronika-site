@@ -80,7 +80,7 @@ ul, ol { list-style: none; }
   color: var(--accent); white-space: nowrap;
   will-change: transform, opacity;
 }
-.wordmark span { display: block; }
+.wordmark span, .wordmark picture { display: block; }
 /* Имя одним цветом: 4 готовые картинки (wordmark-1..4.png), какая показывается, решает скрипт в <head> */
 .wordmark img { display: block; width: min(calc(100vw - var(--pad) * 1.2), 86svh * 2.4956); height: auto; }
 .drift { position: absolute; inset: 0; }
@@ -245,19 +245,16 @@ a.tile:hover img { transform: scale(1.03); }
 /* ── Мобильная версия ──────────────────────────────── */
 @media (max-width: 760px) {
   .splash img { object-position: 46% 50%; }
-  /* Имя вертикально вдоль левого края, читается снизу вверх */
+  /* Имя вертикально вдоль левого края, читается снизу вверх: картинка уже повёрнута (wordmark-v*.png).
+     Как у Levitt на телефоне: шириной около половины экрана, прижато к низу */
   .wordmark {
-    writing-mode: vertical-rl; transform: rotate(180deg);
-    left: -6px; height: 100%; padding: 14px 0 0;
-    font-size: 14.4vh; font-size: 14.4svh; line-height: .9;
-    /* Как у Levitt на телефоне: имя шириной около половины экрана, прижато к низу */
-    --len: min(calc(49vw * 2.4956), calc(100svh - 28px)); width: calc(var(--len) / 2.4956); padding: 0; left: 0;
+    --len: min(calc(49vw * 2.4956), calc(100svh - 28px));
+    left: 0; bottom: 10px; padding: 0; width: calc(var(--len) / 2.4956);
   }
-  /* Картинка повёрнута: вместе с поворотом заголовка читается снизу вверх */
-  .wordmark img {
-    position: absolute; left: 0; top: 10px; width: var(--len); max-width: none;
-    transform-origin: 0 0; transform: translateX(calc(var(--len) / 2.4956)) rotate(90deg);
-  }
+  .wordmark img { width: 100%; height: auto; }
+  /* Шапка на телефоне без смешивания цветов: тёмная на белой главной, дальше цвет текста */
+  .top { color: var(--fg); transition: color 1s; }
+  body.is-home:not(.is-theme):not(.menu-open) .top { color: #111112; }
   .gallery { columns: 2; column-gap: 12px; }
   .gallery .tile { margin-bottom: 12px; }
   .split > *, .split > .narrow, .split > .wide { grid-column: 1 / -1; }
