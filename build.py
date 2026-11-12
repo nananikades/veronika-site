@@ -692,7 +692,7 @@ def home(lang):
 <div class="home" id="home">
 <section class="stage">
   <div class="splash">{cover}</div>
-  <h1 class="wordmark" aria-label="{name}"><span>{n1}</span><span>{n2}</span></h1>
+  <h1 class="wordmark"><img src="{logo}" alt="{name}" width="1692" height="678"></h1>
   <div class="drift">{scatter}</div>
 </section>
 <div class="home-content">
@@ -710,7 +710,7 @@ def home(lang):
 </div>
 """.format(
         cover=cover_html(c),
-        scatter="".join(scatter), name=e(t(S["name"])), n1=t(S["name1"]), n2=t(S["name2"]),
+        scatter="".join(scatter), name=e(t(S["name"])), logo=e(c.root + "assets/wordmark.png?v=" + VER),
         statement=t(S["statement"]), banner=banner, all=t(S["all"]),
         book=t(S["book"]), book_url=c.url("book"),
         book_rows=rows(c, [("book/" + s["slug"], t(s["title"]), t(s["lead"])) for s in SERVICES]

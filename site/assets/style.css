@@ -75,6 +75,8 @@ ul, ol { list-style: none; }
   will-change: transform, opacity;
 }
 .wordmark span { display: block; }
+/* Имя картинкой в градиенте: на всю ширину экрана, как у Levitt */
+.wordmark img { display: block; width: min(calc(100vw - var(--pad) * 1.2), 86svh * 2.4956); height: auto; }
 .drift { position: absolute; inset: 0; }
 .drift-item { position: absolute; left: 0; top: 0; width: 18%; overflow: hidden; will-change: transform; }
 .drift-item:nth-of-type(2n) { z-index: 200; }
@@ -242,6 +244,13 @@ a.tile:hover img { transform: scale(1.03); }
     writing-mode: vertical-rl; transform: rotate(180deg);
     left: -6px; height: 100%; padding: 14px 0 0;
     font-size: 14.4vh; font-size: 14.4svh; line-height: .9;
+    /* Как у Levitt на телефоне: имя шириной около половины экрана, прижато к низу */
+    --len: min(calc(49vw * 2.4956), calc(100svh - 28px)); width: calc(var(--len) / 2.4956); padding: 0; left: 0;
+  }
+  /* Картинка повёрнута: вместе с поворотом заголовка читается снизу вверх */
+  .wordmark img {
+    position: absolute; left: 0; top: 10px; width: var(--len); max-width: none;
+    transform-origin: 0 0; transform: translateX(calc(var(--len) / 2.4956)) rotate(90deg);
   }
   .gallery { columns: 2; column-gap: 12px; }
   .gallery .tile { margin-bottom: 12px; }
