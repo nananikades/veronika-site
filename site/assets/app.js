@@ -34,23 +34,37 @@
     var W = 0, H = 0;
     var measure = function () { W = stage.clientWidth; H = stage.clientHeight; };
     measure();
+    // Гротескные размеры: рядом крошечные и огромные кадры.
+    // Большие ближе к зрителю: идут быстрее и поверх имени; мелкие дальше: медленнее и за именем.
+    var SIZE = ['xl', 'xs', 'm', 's', 'l', 'xs', 'm', 's'];
+    var CLS = {   // ширина портретного кадра в % экрана [компьютер, телефон], скорость (с на проход), глубина
+      xl: { w: [[36, 42], [62, 72]], dur: 22, top: [-12, 28], z: 300 },
+      l:  { w: [[24, 29], [46, 54]], dur: 28, top: [-4, 48], z: 250 },
+      m:  { w: [[14, 17], [30, 36]], dur: 38, top: [5, 68], z: 200 },
+      s:  { w: [[8, 10], [19, 23]], dur: 50, top: [0, 82], z: 60 },
+      xs: { w: [[4.5, 6], [12, 15]], dur: 62, top: [3, 88], z: 50 }
+    };
     var items = els.map(function (el, i) {
       var img = el.querySelector('img');
-      var it = { el: el, img: img, dur: i % 2 === 0 ? 30 : 40, p: (i / 8 + .2) % 1, top: 0 };
+      var c = CLS[SIZE[i % SIZE.length]];
+      var it = { el: el, img: img, dur: c.dur, p: (i / els.length + .1) % 1, top: 0, w: 0 };
+      el.style.zIndex = c.z;
       var place = function () {
-        var small = W < 800, add = W < 768 ? 12.5 : (W <= 992 ? 10 : 0);
+        var small = W < 800;
         var land = +img.getAttribute('width') > +img.getAttribute('height');
-        it.top = i % 2 === 0 ? (small ? rnd(-2.5, 20) : rnd(-5, 15)) : (small ? rnd(50, 75) : rnd(40, 60));
-        el.style.width = ((land ? rnd(20, 30) : rnd(15, 20)) + add) + '%';
+        var r = c.w[small ? 1 : 0], pct = rnd(r[0], r[1]) * (land ? 1.3 : 1);
+        it.top = rnd(c.top[0], c.top[1]);
+        el.style.width = pct + '%';
+        it.w = W * pct / 100;
       };
       it.place = place;
       if (img.complete) place(); else { img.addEventListener('load', function () { place(); draw(); }); place(); }
       return it;
     });
     function draw() {
-      var end = W < 800 ? -.4 : -.25;
+      // кадр въезжает из-за правого края и полностью уходит за левый, какого бы размера он ни был
       items.forEach(function (it) {
-        var x = (1 + (end - 1) * it.p) * W;
+        var x = W - (W + it.w) * it.p;
         it.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + (it.top / 100 * H).toFixed(1) + 'px,0)';
       });
     }

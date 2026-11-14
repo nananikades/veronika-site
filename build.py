@@ -664,15 +664,15 @@ def cover_html(c):
 
 
 def drift_thumb(g, f):
-    """Лёгкая копия кадра для плывущего ряда: телефону не нужно двигать фото в 2000 px."""
+    """Лёгкая копия кадра для плывущих фото: телефону не нужно двигать фото в 2000 px."""
     from PIL import Image
     out_dir = os.path.join(SITE, "photos", "drift")
     if not os.path.isdir(out_dir):
         os.makedirs(out_dir)
     cover = os.path.join(SITE, "photos", "covers", g + ".jpg")
     im = Image.open(cover if os.path.exists(cover) else os.path.join(SITE, "photos", g, f)).convert("RGB")
-    im.thumbnail((560, 560))
-    im.save(os.path.join(out_dir, g + ".jpg"), quality=82)
+    im.thumbnail((560, 560))  # крупные кадры на главной до ~45% ширины экрана
+    im.save(os.path.join(out_dir, g + ".jpg"), quality=80, optimize=True)
     return im.size
 
 
