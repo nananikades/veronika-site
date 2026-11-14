@@ -659,13 +659,18 @@ def cover_html(c):
     return '<picture class="tile">%s<img src="%s" alt="%s"></picture>' % (src, e(base + files[0] + "?v=" + VER), e(c.t(S["name"])))
 
 
+# Обложки на главной: фото, которые Вероника присылает сама, лежат в photos/covers/<раздел>.jpg.
+# Если обложки нет, плывёт первый кадр альбома. Альбомы при этом не меняются.
+
+
 def drift_thumb(g, f):
     """Лёгкая копия кадра для плывущего ряда: телефону не нужно двигать фото в 2000 px."""
     from PIL import Image
     out_dir = os.path.join(SITE, "photos", "drift")
     if not os.path.isdir(out_dir):
         os.makedirs(out_dir)
-    im = Image.open(os.path.join(SITE, "photos", g, f)).convert("RGB")
+    cover = os.path.join(SITE, "photos", "covers", g + ".jpg")
+    im = Image.open(cover if os.path.exists(cover) else os.path.join(SITE, "photos", g, f)).convert("RGB")
     im.thumbnail((560, 560))
     im.save(os.path.join(out_dir, g + ".jpg"), quality=82)
     return im.size
