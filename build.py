@@ -271,9 +271,9 @@ SHOP = [
      "text": L("Подарок на любую съёмку. Получатель сам выбирает дату.",
                "Кез келген түсірілімге сыйлық. Күнді сыйлық иесі өзі таңдайды.",
                "A gift for any shoot. The recipient picks the date."),
-     "facts": L(["Действует 6 месяцев", "Электронный: в WhatsApp или директ", "Печатный в крафт-конверте, бесплатно по запросу"],
-                ["6 ай жарамды", "Электронды: WhatsApp немесе директ арқылы", "Крафт конверттегі баспа нұсқасы, сұраныс бойынша тегін"],
-                ["Valid for 6 months", "Digital: sent via WhatsApp or Instagram", "Printed in a kraft envelope, free on request"])},
+     "facts": L(["Действует 6 месяцев", "Электронный: в WhatsApp или директ", "Печатный в фирменном конверте, бесплатно по запросу"],
+                ["6 ай жарамды", "Электронды: WhatsApp немесе директ арқылы", "Фирмалық конверттегі баспа нұсқасы, сұраныс бойынша тегін"],
+                ["Valid for 6 months", "Digital: sent via WhatsApp or Instagram", "Printed in a branded envelope, free on request"])},
     {"title": L("Подписка", "Жазылым", "Subscription"), "soon": True,
      "text": L("Подписка на новые отпечатки и серии. Условия появятся здесь позже.",
                "Жаңа басылымдар мен серияларға жазылым. Шарттары кейінірек осында пайда болады.",
@@ -809,6 +809,8 @@ def shop(lang):
     cards = []
     for i, x in enumerate(SHOP):
         soon = x.get("soon")
+        if soon:
+            continue  # «Скоро» (подписка) пока скрыта
         cards.append('<article class="card">%s<div class="card-body">%s<h2>%s</h2><p>%s</p>%s%s</div></article>' % (
             tile(c, "prints", i, "3/2", t(x["title"]), lightbox=False),
             '<span class="soon">%s</span>' % t(S["soon"]) if soon else "",
@@ -820,6 +822,10 @@ def shop(lang):
     pt = L("Плёночные отпечатки", "Таспадан басылымдар", "Darkroom prints")
     body += '<div class="block-head"><h2>%s</h2></div>' % e(t(pt))
     body += gallery(c, "prints-film", t(pt))
+    # Цифровые принты для интерьера: photos/prints-digital
+    dt = L("Принты для интерьера", "Интерьерге арналған принттер", "Interior prints")
+    body += '<div class="block-head"><h2>%s</h2></div>' % e(t(dt))
+    body += gallery(c, "prints-digital", t(dt))
     write(c, t(S["shop"]), body, "shop")
 
 

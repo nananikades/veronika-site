@@ -203,15 +203,16 @@ a.tile:hover img { transform: scale(1.03); }
 .btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
 .btn.ghost:hover { border-color: var(--fg); color: var(--fg); }
 
-.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--pad); padding: 0 var(--pad); }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--pad); padding: 0 var(--pad); }
 .card { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--panel); display: flex; flex-direction: column; }
 .card-body { padding: clamp(18px, 2.2vw, 30px); display: flex; flex-direction: column; flex: 1; }
 .card h2 { font-size: clamp(24px, 2.8vw, 38px); font-weight: 700; letter-spacing: -.03em; line-height: 1.05; margin-bottom: 10px; }
-.card p { color: #c9c9c6; }
-.card .facts { margin-top: 16px; }
+.card p { color: var(--muted); }
+.card .facts { margin: 16px 0 22px; }
+.card p { margin-bottom: 22px; }
 .card .facts li { font-size: 15px; padding: 9px 0; }
 .card .btn { align-self: flex-start; margin-top: auto; }
-.card .facts + .btn, .card p + .btn { margin-top: 22px; }
+/* кнопки «Заказать» на одной линии внизу всех карточек */
 .soon { display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 2px 9px; margin-bottom: 12px; align-self: flex-start; }
 
 /* ── Подвал ────────────────────────────────────────── */
