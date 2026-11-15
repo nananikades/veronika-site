@@ -225,9 +225,10 @@ a.tile:hover img { transform: scale(1.03); }
 .foot-bottom a:hover { color: var(--fg); }
 
 /* ── Лайтбокс ──────────────────────────────────────── */
-.lb { position: fixed; inset: 0; z-index: 100; background: color-mix(in srgb, var(--c2) 97%, transparent); display: none; align-items: center; justify-content: center; padding: 48px 16px; }
+.lb { position: fixed; inset: 0; z-index: 100; background: var(--c2); display: none; align-items: center; justify-content: center; padding: 48px 16px; }
 .lb.open { display: flex; }
-.lb img { width: auto; max-width: 100%; max-height: 100%; object-fit: contain; }
+/* Размер от экрана, а не в процентах: на iPhone проценты внутри flex давали картинку нулевой высоты */
+.lb img { width: auto; height: auto; max-width: calc(100vw - 32px); max-height: calc(100vh - 96px); max-height: calc(100svh - 96px); object-fit: contain; flex: none; }
 .lb button { position: absolute; background: none; border: 0; color: var(--fg); font: 600 13px var(--font); cursor: pointer; padding: 14px var(--pad); }
 .lb .x { top: 0; right: 0; }
 .lb .p { left: 0; top: 50%; }
