@@ -816,6 +816,10 @@ def shop(lang):
             facts(t(x["facts"])) if t(x["facts"]) else "",
             "" if soon else cta(c, "order")))
     body += '<div class="cards">%s</div>' % "".join(cards)
+    # Отпечатки с плёнки: фото листов из photos/prints-film, по клику открываются крупно
+    pt = L("Плёночные отпечатки", "Таспадан басылымдар", "Darkroom prints")
+    body += '<div class="block-head"><h2>%s</h2></div>' % e(t(pt))
+    body += gallery(c, "prints-film", t(pt))
     write(c, t(S["shop"]), body, "shop")
 
 
