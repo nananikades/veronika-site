@@ -62,37 +62,32 @@
     var W = 0, H = 0;
     var measure = function () { W = stage.clientWidth; H = stage.clientHeight; };
     measure();
-    // Гротескные размеры: рядом крошечные и огромные кадры.
-    // Большие ближе к зрителю: идут быстрее и поверх имени; мелкие дальше: медленнее и за именем.
-    var SIZE = ['xl', 'xs', 'm', 's', 'l', 'xs', 'm', 's'];
-    var CLS = {   // ширина портретного кадра в % экрана [компьютер, телефон], скорость (с на проход), глубина
-      xl: { w: [[24, 28], [41, 48]], dur: 22, top: [-8, 40], z: 300 },
-      l:  { w: [[24, 29], [46, 54]], dur: 28, top: [-4, 48], z: 250 },
-      m:  { w: [[14, 17], [30, 36]], dur: 38, top: [5, 68], z: 200 },
-      s:  { w: [[8, 10], [19, 23]], dur: 50, top: [0, 82], z: 60 },
-      xs: { w: [[4.5, 6], [12, 15]], dur: 62, top: [3, 88], z: 50 }
-    };
+    // Как у Levitt: кадры идут цепочкой с равным шагом, чётные сверху, нечётные снизу.
+    // Чётные проходят экран за 30 с и идут под именем, нечётные за 40 с и поверх имени.
+    // На каждом новом круге кадр получает новую высоту и ширину.
     var items = els.map(function (el, i) {
       var img = el.querySelector('img');
-      var c = CLS[SIZE[i % SIZE.length]];
-      var it = { el: el, img: img, dur: c.dur, p: (i / els.length + .1) % 1, top: 0, w: 0 };
-      el.style.zIndex = c.z;
+      var even = i % 2 === 0;
+      var it = { el: el, img: img, dur: even ? 30 : 40, p: (i / 8 + .2) % 1, top: 0, w: 0, end: 0 };
+      el.style.zIndex = even ? '' : 200;
       var place = function () {
         var small = W < 800;
         var land = +img.getAttribute('width') > +img.getAttribute('height');
-        var r = c.w[small ? 1 : 0], pct = rnd(r[0], r[1]) * (land ? 1.3 : 1);
-        it.top = rnd(c.top[0], c.top[1]);
+        var add = W < 768 ? 12.5 : W <= 992 ? 10 : 0;   // на узком экране кадры крупнее
+        var pct = land ? rnd(20 + add, 30 + add) : rnd(15 + add, 20 + add);
+        it.top = even ? (small ? rnd(-2.5, 20) : rnd(-5, 15)) : (small ? rnd(50, 75) : rnd(40, 60));
         el.style.width = pct + '%';
         it.w = W * pct / 100;
+        // уходит за левый край на 25% экрана (на телефоне 40%), широкий кадр уходит целиком
+        it.end = Math.max(W * (small ? .4 : .25), it.w);
       };
       it.place = place;
       if (img.complete) place(); else { img.addEventListener('load', function () { place(); draw(); }); place(); }
       return it;
     });
     function draw() {
-      // кадр въезжает из-за правого края и полностью уходит за левый, какого бы размера он ни был
       items.forEach(function (it) {
-        var x = W - (W + it.w) * it.p;
+        var x = W - (W + it.end) * it.p;
         it.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + (it.top / 100 * H).toFixed(1) + 'px,0)';
       });
     }
