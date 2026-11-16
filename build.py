@@ -350,6 +350,22 @@ class Ctx(object):
         return u or "./"
 
 
+_wh_cache = {}
+
+
+def img_wh(g, f):
+    """Размер фото для галереи: по нему скрипт раскладывает кадры рядами слева направо."""
+    k = (g, f)
+    if k not in _wh_cache:
+        from PIL import Image
+        try:
+            with Image.open(os.path.join(SITE, "photos", g, f)) as im:
+                _wh_cache[k] = ' width="%d" height="%d"' % im.size
+        except Exception:
+            _wh_cache[k] = ""
+    return _wh_cache[k]
+
+
 def tile(c, g, i, ratio, alt, lightbox=True):
     files = photos(g)
     if files and i < len(files):
@@ -357,7 +373,7 @@ def tile(c, g, i, ratio, alt, lightbox=True):
         if c.image is None and not files[i].startswith("stock-"):
             c.image = "photos/" + g + "/" + files[i]
         img = '<img src="%s" alt="%s" loading="lazy"%s>' % (
-            e(src), e(alt), "" if lightbox else ' style="aspect-ratio:%s"' % ratio)
+            e(src), e(alt), img_wh(g, files[i]) if lightbox else ' style="aspect-ratio:%s"' % ratio)
         st = " stock" if files[i].startswith("stock-") else ""  # временное фото из интернета
         if lightbox:
             return '<a class="tile reveal%s" href="%s" data-lb>%s</a>' % (st, e(src), img)

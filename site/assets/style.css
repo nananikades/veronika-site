@@ -95,6 +95,8 @@ ul, ol { list-style: none; }
 @media (hover: hover) { .home.ready:not(.is-content) .drift-item a:hover { transform: scale(1.1); } }
 .home.is-content .drift-item a, .menu.open ~ main .drift-item a { opacity: 0; transform: scale(.8); pointer-events: none; }
 .home-content { position: relative; z-index: 300; margin-top: 50vh; padding-top: 8vw; }
+/* Как у Levitt: от имени до первого текста только отступ блока (8vw), без верхнего поля у фразы */
+.home-content > .statement:first-child { padding-top: 0; }
 
 /* ── Плитки и заглушки ─────────────────────────────── */
 .tile { display: block; overflow: hidden; background: var(--panel); }
@@ -176,6 +178,9 @@ a.tile:hover img { transform: scale(1.03); }
 .gallery { columns: 3; column-gap: var(--pad); padding: 0 var(--pad); }
 .gallery .tile { margin-bottom: var(--pad); break-inside: avoid; cursor: zoom-in; }
 .gallery .ph { cursor: default; }
+/* Скрипт раскладывает фото по колонкам рядами слева направо, чтобы серии шли по порядку */
+.gallery.is-masonry { columns: auto; display: flex; align-items: flex-start; gap: var(--pad); }
+.gallery .gcol { flex: 1 1 0; min-width: 0; }
 
 .split {
   display: grid; grid-template-columns: repeat(12, 1fr); gap: 40px var(--pad);
@@ -257,6 +262,7 @@ a.tile:hover img { transform: scale(1.03); }
   .top { color: var(--fg); transition: color 1s; }
   body.is-home:not(.is-theme):not(.menu-open) .top { color: #111112; }
   .gallery { columns: 2; column-gap: 12px; }
+  .gallery.is-masonry { gap: 12px; }
   .gallery .tile { margin-bottom: 12px; }
   .split > *, .split > .narrow, .split > .wide { grid-column: 1 / -1; }
   .cards { grid-template-columns: 1fr; }

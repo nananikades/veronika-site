@@ -11,6 +11,34 @@
   }
   btn.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
 
+  // Лайтбокс листает в исходном порядке, поэтому ссылки берём до раскладки по колонкам
+  var links = Array.prototype.slice.call(document.querySelectorAll('a[data-lb]'));
+
+  // Галереи: фото идут рядами слева направо, каждое в самую короткую колонку.
+  // CSS-колонки шли сверху вниз и перемешивали серии.
+  function masonry() {
+    var n = window.matchMedia('(max-width: 760px)').matches ? 2 : 3;
+    document.querySelectorAll('.gallery').forEach(function (g) {
+      if (g._n === n) return;
+      g._n = n;
+      var tiles = g._tiles || (g._tiles = Array.prototype.slice.call(g.querySelectorAll('.tile')));
+      var cols = [], hs = [], k;
+      for (k = 0; k < n; k++) { cols.push(document.createElement('div')); cols[k].className = 'gcol'; hs.push(0); }
+      tiles.forEach(function (t) {
+        var im = t.querySelector('img'), w = im && +im.getAttribute('width'), h = im && +im.getAttribute('height');
+        var r = w && h ? h / w : 1, m = 0;
+        for (k = 1; k < n; k++) if (hs[k] < hs[m] - .01) m = k;
+        cols[m].appendChild(t);
+        hs[m] += r + .05;
+      });
+      g.textContent = '';
+      cols.forEach(function (c) { g.appendChild(c); });
+      g.classList.add('is-masonry');
+    });
+  }
+  masonry();
+  window.addEventListener('resize', masonry);
+
   // Появление при прокрутке
   var items = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window) {
@@ -173,7 +201,6 @@
   }
 
   // Лайтбокс
-  var links = Array.prototype.slice.call(document.querySelectorAll('a[data-lb]'));
   var lb = document.querySelector('.lb');
   var cur = 0;
   function show(i) {
