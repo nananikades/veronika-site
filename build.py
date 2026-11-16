@@ -384,9 +384,18 @@ def tile(c, g, i, ratio, alt, lightbox=True):
 
 def gallery(c, g, alt, n=9):
     ratios = ["4/5", "3/2", "4/5", "1/1", "4/5", "3/2", "2/3", "4/5", "3/2", "4/5", "1/1", "3/2"]
-    count = len(photos(g)) or n
-    return '<div class="gallery">%s</div>' % "".join(
-        tile(c, g, i, ratios[i % len(ratios)], alt) for i in range(count))
+    files = photos(g)
+    count = len(files) or n
+    # Серии: файлы вида «2_05.jpg» — всё до «_» номер серии. Каждая серия
+    # идёт своим блоком, чтобы кадры разных серий не перемешивались в колонках.
+    groups = []
+    for i in range(count):
+        key = files[i].split("_")[0] if i < len(files) and "_" in files[i] else ""
+        if not groups or groups[-1][0] != key:
+            groups.append((key, []))
+        groups[-1][1].append(i)
+    return "".join('<div class="gallery">%s</div>' % "".join(
+        tile(c, g, i, ratios[i % len(ratios)], alt) for i in idx) for _, idx in groups)
 
 
 def cta(c, label_key="ask"):
