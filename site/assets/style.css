@@ -181,6 +181,9 @@ a.tile:hover img { transform: scale(1.03); }
 /* Скрипт раскладывает фото по колонкам рядами слева направо, чтобы серии шли по порядку */
 .gallery.is-masonry { columns: auto; display: flex; align-items: flex-start; gap: var(--pad); }
 .gallery .gcol { flex: 1 1 0; min-width: 0; }
+.gallery.is-grid { columns: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--pad); }
+.gallery.is-grid .tile { margin: 0; }
+.gallery.is-grid img { width: 100%; height: auto; aspect-ratio: 2/3; object-fit: cover; display: block; }
 
 .split {
   display: grid; grid-template-columns: repeat(12, 1fr); gap: 40px var(--pad);
@@ -263,6 +266,7 @@ a.tile:hover img { transform: scale(1.03); }
   body.is-home:not(.is-theme):not(.menu-open) .top { color: #111112; }
   .gallery { columns: 2; column-gap: 12px; }
   .gallery.is-masonry { gap: 12px; }
+  .gallery.is-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .gallery .tile { margin-bottom: 12px; }
   .split > *, .split > .narrow, .split > .wide { grid-column: 1 / -1; }
   .cards { grid-template-columns: 1fr; }

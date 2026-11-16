@@ -18,7 +18,7 @@
   // CSS-колонки шли сверху вниз и перемешивали серии.
   function masonry() {
     var n = window.matchMedia('(max-width: 760px)').matches ? 2 : 3;
-    document.querySelectorAll('.gallery').forEach(function (g) {
+    document.querySelectorAll('.gallery:not(.is-grid)').forEach(function (g) {
       if (g._n === n) return;
       g._n = n;
       var tiles = g._tiles || (g._tiles = Array.prototype.slice.call(g.querySelectorAll('.tile')));
