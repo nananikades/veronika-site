@@ -588,14 +588,15 @@ def layout(c, title, body, section=""):
 <meta name="color-scheme" content="dark">
 <script>
 /* Как у Levitt: при каждой загрузке новые цвета (текст, фон, наведение, текст на плашке) и новый цвет имени на главной.
-   Цвета не повторяются, пока не покажутся все. Для примерки: ?theme=1..8 и ?logo=1..4 */
+   Цвета не повторяются, пока не покажутся все. Для примерки: ?theme=1..8 и ?logo=1..4
+   Все страницы, кроме главной: чёрный фон, светлый текст, наведение цветом имени. */
 !function(){{var P=[["#EEEEEC","#111112","#FA8030"],["#F1B5C2","#392E2B","#FA8030"],["#152D22","#F3AF87","#B0122A"],["#F2E6D8","#3E2AB4","#DBF863"],["#2E2A1E","#F07082","#FFFFFF","#2E2A1E"],["#7A2410","#75DFB5","#3E2AB4"],["#FE6BF7","#1C008C","#DBF863"],["#DBF863","#3E5453","#F1B5C2"]],
 L=["#FA8030","#E63E3E","#E676B6","#8FD3F4"],q=location.search,
 pick=function(n,k){{var m=new RegExp("[?&]"+k+"=([0-9])").exec(q);if(m&&m[1]>0&&m[1]<=n)return m[1]-1;
 var st={{}};try{{st=JSON.parse(localStorage.getItem("vk-"+k))||{{}}}}catch(e){{}}var bag=st.bag||[],last=st.last;
 if(!bag.length){{for(var j=0;j<n;j++)if(j!==last)bag.push(j);}}
 var i=bag.splice(Math.floor(Math.random()*bag.length),1)[0];try{{localStorage.setItem("vk-"+k,JSON.stringify({{bag:bag,last:i}}))}}catch(e){{}}return i}},
-p=P[pick(P.length,"theme")],d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--c3",p[2]);d.setProperty("--on3",p[3]||p[1]);var h=parseInt(p[1].slice(1),16),lum=((h>>16)*299+((h>>8&255)*587)+(h&255)*114)/1000;d.colorScheme=lum>140?"only light":"dark";var cs=document.querySelector('meta[name="color-scheme"]');if(cs)cs.content=d.colorScheme;var li=pick(L.length,"logo");d.setProperty("--logo",L[li]);document.documentElement.setAttribute("data-logo",li+1);
+li=pick(L.length,"logo"),p={inner}?["#EEEEEC","#111112",L[li],"#111112"]:P[pick(P.length,"theme")],d=document.documentElement.style;d.setProperty("--c1",p[0]);d.setProperty("--c2",p[1]);d.setProperty("--c3",p[2]);d.setProperty("--on3",p[3]||p[1]);var h=parseInt(p[1].slice(1),16),lum=((h>>16)*299+((h>>8&255)*587)+(h&255)*114)/1000;d.colorScheme=lum>140?"only light":"dark";var cs=document.querySelector('meta[name="color-scheme"]');if(cs)cs.content=d.colorScheme;d.setProperty("--logo",L[li]);document.documentElement.setAttribute("data-logo",li+1);
 var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}}();
 </script>
 {seo}
@@ -637,7 +638,7 @@ var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}}()
 """.format(
         hl=HTML_LANG[c.lang], ver=VER, title=e(full_title), desc=e(desc), seo=seo, root=c.root, home=c.url(""),
         name=e(t(S["name"])), mono=e(t(S["name1"])[0] + "—" + t(S["name2"])[0]), langs=langs,
-        bcls=' class="is-home"' if 'id="home"' in body else "", menu=t(S["menu"]), close=t(S["close"]), main_links=main_links, sub=sub, body=body,
+        bcls=' class="is-home"' if 'id="home"' in body else "", inner=0 if 'id="home"' in body else 1, menu=t(S["menu"]), close=t(S["close"]), main_links=main_links, sub=sub, body=body,
         l_booking=t(S["booking"]), ig_dm=IG_DM, write_ig=t(S["write_ig"]), wa=wa,
         l_social=t(S["social"]), ig=IG_URL, tt=TT_URL, l_where=t(S["where"]), where=t(S["where_text"]),
         l_menu=t(S["menu"]),
