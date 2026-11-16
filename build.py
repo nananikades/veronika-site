@@ -851,7 +851,7 @@ def about(lang):
     paras = t(ABOUT)
     body = page_head(c, t(S["about"]), paras[0])
     body += '<section class="split" style="padding-top:0"><div class="narrow">%s</div><div class="wide prose">%s</div></section>' % (
-        tile(c, "about", 0, "4/5", t(S["name"]), lightbox=False), "".join("<p>%s</p>" % e(p) for p in paras[1:]))
+        tile(c, "about", 0, "1/1", t(S["name"]), lightbox=False), "".join("<p>%s</p>" % e(p) for p in paras[1:]))
     body += '<section class="split"><div><h2 class="label">%s</h2>%s</div><div><h2 class="label">%s</h2><p class="big">%s</p></div></section>' % (
         t(LBL_GEAR), facts(t(ABOUT_GEAR)), t(LBL_NO), e(t(ABOUT_NO)))
     write(c, t(S["about"]), body, "about")
