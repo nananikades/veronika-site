@@ -428,8 +428,14 @@ def price_block(c):
         c.t(S["price"]), c.t(S["price_text"]), c.t(S["price_note"]), cta(c)))
 
 
-NAV = [("book", "book"), ("arch", "architecture"), ("art", "art"), ("shop", "shop"), ("about", "about"),
-       ("contacts", "contacts")]
+# Раздел «Архитектура и дрон» временно скрыт из меню и списков (страница по прямой ссылке остаётся).
+SHOW_ARCH = False
+# Авторские разделы, временно скрытые из меню и списков (страницы по прямой ссылке остаются).
+HIDDEN_ART = {"travel"}
+ART_SHOWN = lambda: [a for a in ART if a["slug"] not in HIDDEN_ART]
+NAV = [x for x in [("book", "book"), ("arch", "architecture"), ("art", "art"), ("shop", "shop"),
+                   ("about", "about"), ("contacts", "contacts")] if SHOW_ARCH or x[0] != "arch"]
+ARCH_ROW = lambda t: [("architecture", t(S["arch"]), t(ARCH["lead"]))] if SHOW_ARCH else []
 
 
 OG_LOCALE = {"ru": "ru_RU", "kz": "kk_KZ", "en": "en_US"}
@@ -547,9 +553,10 @@ def seo_files():
           "## Съёмки на заказ / Book a shoot", ""]
     for x in SERVICES:
         ll.append("- [%s](%s): %s" % (x["title"]["ru"], Ctx("ru", "book/" + x["slug"]).abs(), x["lead"]["ru"]))
-    ll.append("- [%s](%s): %s" % (S["arch"]["ru"], Ctx("ru", "architecture").abs(), ARCH["lead"]["ru"]))
+    if SHOW_ARCH:
+        ll.append("- [%s](%s): %s" % (S["arch"]["ru"], Ctx("ru", "architecture").abs(), ARCH["lead"]["ru"]))
     ll += ["", "## Авторские проекты / Personal work", ""]
-    for x in ART:
+    for x in ART_SHOWN():
         ll.append("- [%s](%s): %s" % (x["title"]["ru"], Ctx("ru", "art/" + x["slug"]).abs(), x["lead"]["ru"]))
     ll += ["", "## Ещё", "",
            "- [Магазин](%s): отпечатки из даркрума, принты для интерьера, сертификаты" % Ctx("ru", "shop").abs(),
@@ -587,7 +594,7 @@ def layout(c, title, body, section=""):
     main_links = "".join('<a href="%s"%s>%s</a>' % (
         c.url(p), ' aria-current="page"' if section == p else "", t(S[k])) for k, p in NAV)
     sub = "".join('<a href="%s">%s</a>' % (c.url("book/" + s["slug"]), t(s["title"])) for s in SERVICES)
-    sub += "".join('<a href="%s">%s</a>' % (c.url("art/" + a["slug"]), t(a["title"])) for a in ART)
+    sub += "".join('<a href="%s">%s</a>' % (c.url("art/" + a["slug"]), t(a["title"])) for a in ART_SHOWN())
     wa = ('<p class="big"><a href="https://wa.me/%s">WhatsApp</a></p>' % WHATSAPP) if WHATSAPP else ""
     return """<!doctype html>
 <html lang="{hl}">
@@ -654,7 +661,7 @@ var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=p[1]}}()
         l_booking=t(S["booking"]), ig_dm=IG_DM, write_ig=t(S["write_ig"]), wa=wa,
         l_social=t(S["social"]), ig=IG_URL, tt=TT_URL, l_where=t(S["where"]), where=t(S["where_text"]),
         l_menu=t(S["menu"]),
-        foot_links="<br>".join('<a href="%s">%s</a>' % (c.url(p), t(S[k])) for k, p in NAV[:4]),
+        foot_links="<br>".join('<a href="%s">%s</a>' % (c.url(p), t(S[k])) for k, p in NAV if k in ("book", "arch", "art", "shop")),
         rights=t(S["rights"]), top=t(S["top"]), prev=t(S["prev"]), next=t(S["next"]))
 
 
@@ -761,9 +768,9 @@ def home(lang):
         statement=t(S["statement"]), banner=banner, all=t(S["all"]),
         book=t(S["book"]), book_url=c.url("book"),
         book_rows=rows(c, [("book/" + s["slug"], t(s["title"]), t(s["lead"])) for s in SERVICES]
-                       + [("architecture", t(S["arch"]), t(ARCH["lead"]))]),
+                       + ARCH_ROW(t)),
         art=t(S["art"]), art_url=c.url("art"),
-        art_rows=rows(c, [("art/" + a["slug"], t(a["title"]), t(a["lead"])) for a in ART]),
+        art_rows=rows(c, [("art/" + a["slug"], t(a["title"]), t(a["lead"])) for a in ART_SHOWN()]),
         shop=t(S["shop"]), shop_url=c.url("shop"),
         shop_rows=rows(c, [("shop", t(x["title"]), t(x["text"])) for x in SHOP[:3]]),
         about=t(S["about"]), intro=t(S["intro"]), about_url=c.url("about"))
@@ -775,7 +782,7 @@ def book_index(lang):
     t = c.t
     body = page_head(c, t(S["book"]), t(S["price_note"]))
     body += rows(c, [("book/" + s["slug"], t(s["title"]), t(s["lead"])) for s in SERVICES]
-                 + [("architecture", t(S["arch"]), t(ARCH["lead"]))])
+                 + ARCH_ROW(t))
     body += '<section class="split"><div><h2 class="label">%s</h2>%s</div>%s</section>' % (
         t(S["terms"]), facts(t(TERMS)), price_block(c))
     write(c, t(S["book"]), body, "book")
@@ -807,7 +814,7 @@ def art_index(lang):
     c = Ctx(lang, "art")
     t = c.t
     body = page_head(c, t(S["art"]), t(S["intro"]))
-    body += rows(c, [("art/" + a["slug"], t(a["title"]), t(a["lead"])) for a in ART])
+    body += rows(c, [("art/" + a["slug"], t(a["title"]), t(a["lead"])) for a in ART_SHOWN()])
     write(c, t(S["art"]), body, "art")
 
 
