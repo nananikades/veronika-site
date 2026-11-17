@@ -282,22 +282,22 @@ SHOP = [
 ]
 
 ABOUT = L(
-    ["Я Вероника Ким, фотограф из Алматы. Снимаю с 2017 года: на цифру и плёнку, с дрона и под водой.",
+    ["Я Вероника Ким, фотограф из Алматы. Снимаю с 1997 года: на цифру и плёнку, с дрона и под водой.",
      "Мне интересен авторский подход: студийные сеты и арт-проекты, которые придумываю и собираю с нуля. В цифре люблю яркий, плотный цвет. На плёнке снимаю только чёрно-белый средний формат.",
      "У меня своя проявочная. Плёнку проявляю сама и сама печатаю отпечатки: от нажатия на спуск до готового листа работа остаётся в одних руках.",
      "Работаю в Алматы и Астане, езжу на выездные съёмки."],
-    ["Мен Вероника Ким, алматылық фотографпын. 2017 жылдан бері түсіремін: сандық камераға және таспаға, дроннан және су астында.",
+    ["Мен Вероника Ким, алматылық фотографпын. 1997 жылдан бері түсіремін: сандық камераға және таспаға, дроннан және су астында.",
      "Маған авторлық көзқарас қызық: өзім ойлап тауып, нөлден құрастыратын студиялық сеттер мен арт-жобалар. Сандық фотода ашық, қанық түсті ұнатамын. Таспаға тек ақ-қара орта форматты түсіремін.",
      "Өз зертханам бар. Таспаны өзім өңдеп, басылымдарды өзім басамын: түсіру сәтінен дайын параққа дейін жұмыс бір қолда қалады.",
      "Алматы мен Астанада жұмыс істеймін, көшпелі түсірілімдерге шығамын."],
-    ["I'm Veronika Kim, a photographer based in Almaty. I've been shooting since 2017: digital and film, from a drone and underwater.",
+    ["I'm Veronika Kim, a photographer based in Almaty. I've been shooting since 1997: digital and film, from a drone and underwater.",
      "I'm drawn to authored work: studio sets and art projects that I invent and build from scratch. In digital I love bold, dense colour. On film I shoot black-and-white medium format only.",
      "I have my own darkroom. I develop the film and make the prints myself, so the work stays in one pair of hands from shutter to finished sheet.",
      "I work in Almaty and Astana and travel for shoots."])
 
-ABOUT_GEAR = L(["Canon EOS R", "Rolleiflex, двухобъективная", "Mamiya, средний формат", "Дрон: фото и видео", "Подводный бокс"],
-               ["Canon EOS R", "Rolleiflex, екі объективті", "Mamiya, орта формат", "Дрон: фото мен видео", "Су асты боксы"],
-               ["Canon EOS R", "Rolleiflex twin-lens", "Mamiya medium format", "Drone: photo and video", "Underwater housing"])
+ABOUT_GEAR = L(["Canon EOS R", "Rolleiflex, двухобъективная", "Mamiya, средний формат", "Hasselblad", "Дрон: фото и видео", "Подводный бокс"],
+               ["Canon EOS R", "Rolleiflex, екі объективті", "Mamiya, орта формат", "Hasselblad", "Дрон: фото мен видео", "Су асты боксы"],
+               ["Canon EOS R", "Rolleiflex twin-lens", "Mamiya medium format", "Hasselblad", "Drone: photo and video", "Underwater housing"])
 ABOUT_NO = L("Большие свадьбы, тои и людные мероприятия я не снимаю. Небольшие события до 20 человек обсуждаем лично.",
              "Үлкен тойлар мен көп адам жиналатын іс-шараларды түсірмеймін. 20 адамға дейінгі шағын оқиғаларды жеке талқылаймыз.",
              "I don't shoot large weddings or crowded events. Small gatherings of up to 20 people can be discussed individually.")
@@ -547,7 +547,7 @@ def seo_files():
 
     ll = ["# Veronika Kim (Вероника Ким) — фотограф, Алматы и Астана, Казахстан", "",
           "> " + S["desc"]["ru"], "> " + S["desc"]["en"], "",
-          "Вероника Ким снимает с 2017 года: цифра, чёрно-белая плёнка среднего формата (Rolleiflex, Mamiya), "
+          "Вероника Ким снимает с 1997 года: цифра, чёрно-белая плёнка среднего формата (Rolleiflex, Mamiya, Hasselblad), "
           "дрон и подводная съёмка. Своя проявочная: проявляет плёнку и печатает отпечатки вручную. "
           "Работает в Алматы и Астане, выезжает на съёмки в другие города и страны. "
           "Не снимает большие свадьбы и людные мероприятия.", "",
@@ -877,8 +877,10 @@ def about(lang):
     body = page_head(c, t(S["about"]), paras[0])
     body += '<section class="split" style="padding-top:0"><div class="narrow">%s</div><div class="wide prose">%s</div></section>' % (
         tile(c, "about", 0, "1/1", t(S["name"]), lightbox=False), "".join("<p>%s</p>" % e(p) for p in paras[1:]))
-    body += '<section class="split"><div><h2 class="label">%s</h2>%s</div><div><h2 class="label">%s</h2><p class="big">%s</p></div></section>' % (
-        t(LBL_GEAR), facts(t(ABOUT_GEAR)), t(LBL_NO), e(t(ABOUT_NO)))
+    # Справа цитата с главной (блок «Чего я не снимаю» убран)
+    body += ('<section class="split"><div><h2 class="label">%s</h2>%s</div><div><p class="statement" '
+             'style="padding:0;font-size:clamp(24px,3vw,44px)">%s</p></div></section>') % (
+        t(LBL_GEAR), facts(t(ABOUT_GEAR)), t(S["statement"]))
     write(c, t(S["about"]), body, "about")
 
 
