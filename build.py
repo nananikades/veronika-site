@@ -721,27 +721,15 @@ def home(lang):
     # (галерея, путь, подпись, колонка, ширина, пропорция, отступ сверху, поверх надписи?)
     A = {a["slug"]: a for a in ART}
     V = {s["slug"]: s for s in SERVICES}
-    # (галерея, путь, подпись, колонка, ширина, пропорция, отступ сверху)
-    cells = [
-        ("editorial", "art/editorial", t(A["editorial"]["title"])),
-        ("mountains", "book/mountains", t(V["mountains"]["title"])),
-        ("kids", "book/kids", t(V["kids"]["title"])),
-        ("underwater", "book/underwater", t(V["underwater"]["title"])),
-        ("portrait", "book/portrait", t(V["portrait"]["title"])),
-        ("architecture", "architecture", t(S["arch"])),
-        ("love-story", "book/love-story", t(V["love-story"]["title"])),
-        ("travel", "art/travel", t(A["travel"]["title"])),
-    ]
+    # Плывущие фото: 9 крупных кадров, которые Вероника собрала сама (photos/float/1..9.jpg).
+    # Все заглушки: по нажатию никуда не ведут. Порядок файлов = порядок в её макете.
+    from PIL import Image
+    fdir = os.path.join(SITE, "photos", "float")
     scatter = []
-    for g, path, label in cells:
-        files = photos(g)
-        if not files:
-            continue
-        w, h = drift_thumb(g, files[0])
-        # Обложка скрытого раздела остаётся на главной заглушкой: без ссылки, по нажатию никуда не ведёт.
-        link = ' class="stub"' if path in HIDDEN_PATHS else ' href="%s"' % c.url(path)
-        scatter.append('<div class="drift-item"><a%s><img src="%s" width="%d" height="%d" alt="%s" decoding="async"></a></div>' % (
-            link, e(c.root + "photos/drift/" + g + ".jpg?v=" + VER), w, h, e(label)))
+    for f in sorted((x for x in os.listdir(fdir) if x.endswith(".jpg")), key=lambda x: int(x.split(".")[0])):
+        w, h = Image.open(os.path.join(fdir, f)).size
+        scatter.append('<div class="drift-item"><a class="stub"><img src="%s" width="%d" height="%d" alt="%s" decoding="async"></a></div>' % (
+            e(c.root + "photos/float/" + f + "?v=" + VER), w, h, e(t(S["name"]))))
     banner = ""
     if SHOW_BANNER:
         banner = ('<section class="banner"><div><h2 class="label">%s</h2><p class="big">%s</p><p>%s</p></div>'
