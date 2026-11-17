@@ -433,6 +433,8 @@ SHOW_ARCH = False
 # Авторские разделы, временно скрытые из меню и списков (страницы по прямой ссылке остаются).
 HIDDEN_ART = {"travel"}
 ART_SHOWN = lambda: [a for a in ART if a["slug"] not in HIDDEN_ART]
+# Пути скрытых страниц: их нет в меню, списках, на главной и в sitemap, поисковикам noindex.
+HIDDEN_PATHS = ({"architecture"} if not SHOW_ARCH else set()) | {"art/" + x for x in HIDDEN_ART}
 NAV = [x for x in [("book", "book"), ("arch", "architecture"), ("art", "art"), ("shop", "shop"),
                    ("about", "about"), ("contacts", "contacts")] if SHOW_ARCH or x[0] != "arch"]
 ARCH_ROW = lambda t: [("architecture", t(S["arch"]), t(ARCH["lead"]))] if SHOW_ARCH else []
@@ -447,7 +449,8 @@ def seo_head(c, title, full_title, desc, section):
     t = c.t
     url = c.abs()
     image = SITE_URL + "/" + (c.image or "assets/og.jpg")
-    tags = ['<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">',
+    tags = ['<meta name="robots" content="%s">' % ("noindex, follow" if c.path in HIDDEN_PATHS else
+                                                     "index, follow, max-image-preview:large, max-snippet:-1"),
             '<link rel="canonical" href="%s">' % url]
     for lg in LANGS:
         tags.append('<link rel="alternate" hreflang="%s" href="%s">' % (HTML_LANG[lg], c.abs(lang=lg)))
@@ -479,7 +482,7 @@ def seo_head(c, title, full_title, desc, section):
         "homeLocation": {"@type": "City", "name": "Almaty", "addressCountry": "KZ"},
         "knowsAbout": ["portrait photography", "fine art photography", "black-and-white film photography",
                        "darkroom printing", "drone photography", "underwater photography",
-                       "architecture and interior photography"],
+                       ] + (["architecture and interior photography"] if SHOW_ARCH else []),
     }
     business = {
         "@type": "ProfessionalService", "@id": SITE_URL + "/#studio",
@@ -520,7 +523,7 @@ def seo_files():
     from PIL import Image
     pages = sorted({os.path.relpath(d, SITE).replace(os.sep, "/") for d, _, fs in os.walk(SITE)
                     if "index.html" in fs})
-    ru = [("" if p == "." else p) for p in pages if not (p + "/").startswith(("kz/", "en/"))]
+    ru = [("" if p == "." else p) for p in pages if not (p + "/").startswith(("kz/", "en/")) and p not in HIDDEN_PATHS]
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
     today = time.strftime("%Y-%m-%d")
@@ -735,8 +738,10 @@ def home(lang):
         if not files:
             continue
         w, h = drift_thumb(g, files[0])
-        scatter.append('<div class="drift-item"><a href="%s"><img src="%s" width="%d" height="%d" alt="%s" decoding="async"></a></div>' % (
-            c.url(path), e(c.root + "photos/drift/" + g + ".jpg?v=" + VER), w, h, e(label)))
+        # Обложка скрытого раздела остаётся на главной заглушкой: без ссылки, по нажатию никуда не ведёт.
+        link = ' class="stub"' if path in HIDDEN_PATHS else ' href="%s"' % c.url(path)
+        scatter.append('<div class="drift-item"><a%s><img src="%s" width="%d" height="%d" alt="%s" decoding="async"></a></div>' % (
+            link, e(c.root + "photos/drift/" + g + ".jpg?v=" + VER), w, h, e(label)))
     banner = ""
     if SHOW_BANNER:
         banner = ('<section class="banner"><div><h2 class="label">%s</h2><p class="big">%s</p><p>%s</p></div>'
@@ -834,7 +839,7 @@ def art_page(lang, a):
             right = price_block(c)
         body += '<section class="split"><div class="prose">%s</div>%s</section>' % (prose, right)
     body += '<div class="block-head"><h2>%s</h2><a href="%s">%s</a></div>' % (t(S["more_art"]), c.url("art"), t(S["all"]))
-    body += rows(c, [("art/" + x["slug"], t(x["title"]), t(x["lead"])) for x in ART if x is not a])
+    body += rows(c, [("art/" + x["slug"], t(x["title"]), t(x["lead"])) for x in ART_SHOWN() if x is not a])
     write(c, t(a["title"]), body, "art")
 
 

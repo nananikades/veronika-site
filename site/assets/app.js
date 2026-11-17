@@ -68,7 +68,7 @@
     var items = els.map(function (el, i) {
       var img = el.querySelector('img');
       var even = i % 2 === 0;
-      var it = { el: el, img: img, dur: even ? 30 : 40, p: (i / 8 + .2) % 1, top: 0, w: 0, end: 0 };
+      var it = { el: el, img: img, dur: even ? 30 : 40, p: (i / els.length + .2) % 1, top: 0, w: 0, end: 0 };
       el.style.zIndex = even ? '' : 200;
       var place = function () {
         var small = W < 800;

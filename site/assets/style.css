@@ -281,3 +281,4 @@ a.tile:hover img { transform: scale(1.03); }
   .menu { padding-top: 110px; }
   .menu-langs { display: flex; gap: 18px; font-size: 15px; font-weight: 600; }
 }
+.drift-item .stub { cursor: default; }
