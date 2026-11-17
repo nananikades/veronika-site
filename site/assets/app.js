@@ -39,6 +39,22 @@
   masonry();
   window.addEventListener('resize', masonry);
 
+  // «Обо мне»: цитата по высоте блока «Техника» слева (на телефоне блоки друг под другом, размер из CSS)
+  var quote = document.querySelector('.about-quote');
+  function fitQuote() {
+    if (!quote) return;
+    quote.style.fontSize = '';
+    if (window.matchMedia('(max-width: 760px)').matches) return;
+    var left = quote.parentNode.previousElementSibling, H = left.offsetHeight, lo = 20, hi = 400, m, k;
+    for (k = 0; k < 24; k++) {
+      m = (lo + hi) / 2; quote.style.fontSize = m + 'px';
+      if (quote.offsetHeight > H || quote.scrollWidth > quote.clientWidth + 1) hi = m; else lo = m;
+    }
+    quote.style.fontSize = lo + 'px';
+  }
+  fitQuote(); window.addEventListener('resize', fitQuote);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitQuote);
+
   // Появление при прокрутке
   var items = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window) {

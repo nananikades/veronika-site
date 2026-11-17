@@ -295,9 +295,9 @@ ABOUT = L(
      "I have my own darkroom. I develop the film and make the prints myself, so the work stays in one pair of hands from shutter to finished sheet.",
      "I work in Almaty and Astana and travel for shoots."])
 
-ABOUT_GEAR = L(["Canon EOS R", "Rolleiflex, двухобъективная", "Mamiya, средний формат", "Hasselblad", "Дрон: фото и видео", "Подводный бокс"],
-               ["Canon EOS R", "Rolleiflex, екі объективті", "Mamiya, орта формат", "Hasselblad", "Дрон: фото мен видео", "Су асты боксы"],
-               ["Canon EOS R", "Rolleiflex twin-lens", "Mamiya medium format", "Hasselblad", "Drone: photo and video", "Underwater housing"])
+ABOUT_GEAR = L(["Canon EOS R", "Rolleiflex, двухобъективная", "Mamiya, средний формат", "Hasselblad, средний формат", "Дрон: фото и видео", "Подводный бокс"],
+               ["Canon EOS R", "Rolleiflex, екі объективті", "Mamiya, орта формат", "Hasselblad, орта формат", "Дрон: фото мен видео", "Су асты боксы"],
+               ["Canon EOS R", "Rolleiflex twin-lens", "Mamiya medium format", "Hasselblad medium format", "Drone: photo and video", "Underwater housing"])
 ABOUT_NO = L("Большие свадьбы, тои и людные мероприятия я не снимаю. Небольшие события до 20 человек обсуждаем лично.",
              "Үлкен тойлар мен көп адам жиналатын іс-шараларды түсірмеймін. 20 адамға дейінгі шағын оқиғаларды жеке талқылаймыз.",
              "I don't shoot large weddings or crowded events. Small gatherings of up to 20 people can be discussed individually.")
@@ -878,8 +878,8 @@ def about(lang):
     body += '<section class="split" style="padding-top:0"><div class="narrow">%s</div><div class="wide prose">%s</div></section>' % (
         tile(c, "about", 0, "1/1", t(S["name"]), lightbox=False), "".join("<p>%s</p>" % e(p) for p in paras[1:]))
     # Справа цитата с главной (блок «Чего я не снимаю» убран)
-    body += ('<section class="split"><div><h2 class="label">%s</h2>%s</div><div><p class="statement" '
-             'style="padding:0;font-size:clamp(24px,3vw,44px)">%s</p></div></section>') % (
+    body += ('<section class="split"><div class="narrow"><h2 class="label">%s</h2>%s</div><div class="wide">'
+             '<p class="statement about-quote">%s</p></div></section>') % (
         t(LBL_GEAR), facts(t(ABOUT_GEAR)), t(S["statement"]))
     write(c, t(S["about"]), body, "about")
 
