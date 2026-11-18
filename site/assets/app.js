@@ -78,13 +78,18 @@
     var W = 0, H = 0;
     var measure = function () { W = stage.clientWidth; H = stage.clientHeight; };
     measure();
-    // Как у Levitt: кадры идут цепочкой с равным шагом, чётные сверху, нечётные снизу.
-    // Чётные проходят экран за 30 с и идут под именем, нечётные за 40 с и поверх имени.
+    // Как у Levitt: кадры идут цепочкой с равным шагом в два ряда.
+    // Верхний ряд проходит экран за 30 с и идёт под именем, нижний за 40 с и поверх имени.
     // На каждом новом круге кадр получает новую высоту и ширину.
+    // Расстановка как в макете Вероники: первая половина кадров (1–5) идёт верхним рядом,
+    // остальные (6–9) нижним. При загрузке кадр 1 слева, дальше по порядку вправо.
+    var nTop = Math.ceil(els.length / 2), nBot = els.length - nTop;
     var items = els.map(function (el, i) {
       var img = el.querySelector('img');
-      var even = i % 2 === 0;
-      var it = { el: el, img: img, dur: even ? 30 : 40, p: (i / els.length + .2) % 1, top: 0, w: 0, end: 0 };
+      var even = i < nTop;
+      var k = even ? i : i - nTop, n = even ? nTop : nBot;
+      var p0 = even ? .84 - k / n : .82 - k / n;
+      var it = { el: el, img: img, dur: even ? 30 : 40, p: ((p0 % 1) + 1) % 1, top: 0, w: 0, end: 0 };
       el.style.zIndex = even ? '' : 200;
       var place = function () {
         var small = W < 800;
