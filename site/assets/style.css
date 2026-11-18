@@ -20,9 +20,7 @@ body {
   font: 400 16px/1.5 var(--font); -webkit-font-smoothing: antialiased;
   transition: background-color 1s;
 }
-/* Главная как у Levitt: кадры плывут по белому, фон становится цветом пары, когда наезжает текст */
-body.is-home { background: #fff; }
-body.is-home.is-theme { background: var(--bg); }
+/* Главная: белого фона нет никогда, всегда цвет пары */
 a { color: inherit; text-decoration: none; }
 img { display: block; width: 100%; height: auto; }
 h1, h2, h3, p, ul, ol { margin: 0; padding: 0; }
@@ -265,7 +263,6 @@ a.tile:hover img { transform: scale(1.03); }
   .wordmark img { width: 100%; height: auto; }
   /* Шапка на телефоне без смешивания цветов: тёмная на белой главной, дальше цвет текста */
   .top { color: var(--fg); transition: color 1s; }
-  body.is-home:not(.is-theme):not(.menu-open) .top { color: #111112; }
   .gallery { columns: 2; column-gap: 12px; }
   .gallery.is-masonry { gap: 12px; }
   .gallery.is-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }

@@ -160,7 +160,7 @@
       setTimeout(go, 8000);
     } else {
       // Обложка держится не меньше пары секунд: отсчёт идёт с момента, когда фото загрузилось
-      var hold = seen ? 2500 : 4500;
+      var hold = seen ? 1500 : 3500;  // на секунду короче, чем было
       if (simg && !simg.complete) {
         simg.addEventListener('load', function () { setTimeout(go, hold); });
         simg.addEventListener('error', go);
