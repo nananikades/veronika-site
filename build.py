@@ -864,7 +864,7 @@ def about(lang):
     paras = t(ABOUT)
     body = page_head(c, t(S["about"]), paras[0])
     body += '<section class="split" style="padding-top:0"><div class="narrow">%s</div><div class="wide prose">%s</div></section>' % (
-        tile(c, "about", 0, "1/1", t(S["name"]), lightbox=False), "".join("<p>%s</p>" % e(p) for p in paras[1:]))
+        tile(c, "about", 0, "5/7", t(S["name"]), lightbox=False), "".join("<p>%s</p>" % e(p) for p in paras[1:]))
     # Справа цитата с главной (блок «Чего я не снимаю» убран)
     body += ('<section class="split"><div><h2 class="label">%s</h2>%s</div><div>'
              '<p class="statement about-quote">%s</p></div></section>') % (
