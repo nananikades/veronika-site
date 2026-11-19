@@ -99,8 +99,8 @@
         it.top = even ? (small ? rnd(-2.5, 20) : rnd(-5, 15)) : (small ? rnd(50, 75) : rnd(40, 60));
         el.style.width = pct + '%';
         it.w = W * pct / 100;
-        // уходит за левый край на 25% экрана (на телефоне 40%), широкий кадр уходит целиком
-        it.end = Math.max(W * (small ? .4 : .25), it.w);
+        // как у Levitt: от правого края до −25% экрана (на телефоне −40%)
+        it.end = W * (small ? .4 : .25);
       };
       it.place = place;
       if (img.complete) place(); else { img.addEventListener('load', function () { place(); draw(); }); place(); }
@@ -114,10 +114,10 @@
     }
     draw();
     // Цикл работает только пока кадры плывут: во время прокрутки страницы скрипт ничего не двигает
-    var ready = false, paused = false, speed = 1, last = 0, raf = 0;
+    var ready = false, moving = false, paused = false, speed = 1, last = 0, raf = 0;
     function tick(now) {
       raf = 0;
-      if (paused || !ready) return;
+      if (paused || !ready || !moving) return;
       var dt = Math.min(now - last, 100) / 1000; last = now;
       items.forEach(function (it) {
         it.p += dt * speed / it.dur;
@@ -126,14 +126,19 @@
       draw();
       raf = requestAnimationFrame(tick);
     }
-    function start() { if (raf || reduce || paused || !ready) return; last = performance.now(); raf = requestAnimationFrame(tick); }
+    function start() { if (raf || reduce || paused || !ready || !moving) return; last = performance.now(); raf = requestAnimationFrame(tick); }
     els.forEach(function (el) {
       el.addEventListener('mouseenter', function () { speed = .5; });
       el.addEventListener('mouseleave', function () { speed = 1; });
     });
     var seen = false;
     try { seen = sessionStorage.getItem('splash') === '1'; sessionStorage.setItem('splash', '1'); } catch (err) {}
-    var go = function () { home.classList.add('ready'); ready = true; start(); };
+    // Как у Levitt: обложка уходит, кадры появляются на месте и стоят ещё 1 с, потом плывут
+    var go = function () {
+      if (ready) return;
+      home.classList.add('ready'); ready = true;
+      setTimeout(function () { moving = true; start(); }, 1000);
+    };
     // Обложка на широком экране: размер не трогаем (кадр заполняет один экран),
     // двигаем только обрезку по вертикали, чтобы глаза не попадали под «Veronika».
     // Вариант a: глаза над именем. Вариант b: глаза ниже «Veronika», на уровне «Kim».
@@ -153,20 +158,24 @@
       simg.style.objectPosition = '50% ' + (off / slack * 100).toFixed(1) + '%';
     }
     if (simg) { if (simg.complete) crop(); else simg.addEventListener('load', crop); }
+    // обложка проявляется за 1 с, как у Levitt
+    if (simg) { var shown = function () { home.classList.add('cover-in'); }; if (simg.complete) requestAnimationFrame(shown); else { simg.addEventListener('load', shown); simg.addEventListener('error', shown); } }
     window.addEventListener('resize', crop);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(crop);
     if (cv) {
       home.querySelector('.splash').addEventListener('click', go);  // примерка: дольше обычного, 8 секунд
       setTimeout(go, 8000);
     } else {
-      // Обложка держится не меньше пары секунд: отсчёт идёт с момента, когда фото загрузилось
-      var hold = seen ? 1500 : 3500;  // на секунду короче, чем было
+      // Как у Levitt: обложка держится 3 с с момента открытия страницы, при каждом заходе.
+      // Если фото к этому времени ещё не загрузилось, ждём его (но не дольше 9 с).
+      var t0 = Date.now(), HOLD = 3000;
+      var whenLoaded = function () { setTimeout(go, Math.max(0, HOLD - (Date.now() - t0))); };
       if (simg && !simg.complete) {
-        simg.addEventListener('load', function () { setTimeout(go, hold); });
+        simg.addEventListener('load', whenLoaded);
         simg.addEventListener('error', go);
-        setTimeout(go, hold + 6000);
+        setTimeout(go, HOLD + 6000);
       } else {
-        setTimeout(go, hold);
+        whenLoaded();
       }
     }
 

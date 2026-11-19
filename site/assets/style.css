@@ -68,7 +68,8 @@ ul, ol { list-style: none; }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; width: 100%; overflow: hidden; contain: layout paint; }
 .splash { position: absolute; inset: 0; z-index: 50; transition: opacity .5s, transform .5s; }
 .splash .tile { height: 100%; }
-.splash img { object-position: 50% 66%; }
+.splash img { object-position: 50% 66%; opacity: 0; transition: opacity 1s; }
+.home.cover-in .splash img { opacity: 1; }
 .home.ready .splash { opacity: 0; transform: translateY(-10vw); pointer-events: none; visibility: hidden; transition: opacity .5s, transform .5s, visibility 0s .5s; }
 .wordmark {
   position: absolute; left: 0; bottom: 0; z-index: 100; pointer-events: none;
@@ -94,7 +95,9 @@ ul, ol { list-style: none; }
   opacity: 0; transform: scale(.8); pointer-events: none;
   transition: opacity .5s, transform .5s cubic-bezier(.65,0,.35,1);
 }
-.drift-item img { width: 100%; height: auto; }
+.drift-item img { width: 100%; height: auto; opacity: 0; transition: opacity .5s .5s; }
+.home.ready .drift-item img { opacity: 1; }
+.home.is-content .drift-item img { opacity: 0; transition-delay: 0s; }
 .home.ready .drift-item a { opacity: 1; transform: none; pointer-events: auto; }
 @media (hover: hover) { .home.ready:not(.is-content) .drift-item a:hover { transform: scale(1.1); } }
 .home.is-content .drift-item a, .menu.open ~ main .drift-item a { opacity: 0; transform: scale(.8); pointer-events: none; }
