@@ -79,6 +79,12 @@ ul, ol { list-style: none; }
   will-change: transform, opacity;
 }
 .wordmark span, .wordmark picture { display: block; }
+/* Как у Levitt на широком экране: пока плывут кадры, имя опущено и уходит за нижний край на 8vw.
+   Когда начинается текст, имя возвращается на место. */
+@media (min-width: 761px) and (orientation: landscape) {
+  .wordmark { transition: bottom .5s; }
+  .home.ready:not(.is-content) .wordmark { bottom: -8vw; }
+}
 /* Имя одним цветом: 4 готовые картинки (wordmark-1..4.png), какая показывается, решает скрипт в <head> */
 .wordmark img { display: block; width: min(calc(100vw - var(--pad) * 1.2), 86svh * 2.4956); height: auto; }
 .drift { position: absolute; inset: 0; }
