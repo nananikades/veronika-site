@@ -10,7 +10,7 @@
 Файлы с именем stock-*.jpg: временные фото из интернета (Unsplash), на
 сайте они помечены значком «сток». Перед публикацией замените своими.
 Названия галерей: home, portrait, love-story, family, pregnancy, kids,
-mountains, underwater, architecture, thirst, film, travel, editorial,
+mountains, underwater, aurora, architecture, thirst, film, travel, editorial,
 prints, about.
 """
 import html
@@ -191,6 +191,14 @@ SERVICES = [
      "facts": L(["Портреты и съёмка в движении под водой", "Подводный мир: рифы и их жители", "Даты привязаны к моим поездкам, пишите заранее"],
                 ["Су астындағы портрет пен қозғалыстағы түсірілім", "Су асты әлемі: рифтер мен олардың тұрғындары", "Күндер сапарларыма байланысты, алдын ала жазыңыз"],
                 ["Portraits and movement underwater", "The underwater world: reefs and their inhabitants", "Dates follow my trips, so write in advance"])},
+    {"slug": "northern-lights", "g": "aurora",
+     "title": L("Северное сияние", "Солтүстік шұғыласы", "Northern lights"),
+     "lead": L("Ночные съёмки северного сияния.",
+               "Солтүстік шұғыласын түнгі түсіру.",
+               "Night shoots of the northern lights."),
+     "facts": L(["Ночная съёмка", "Даты зависят от прогноза сияния, пишите заранее"],
+                ["Түнгі түсірілім", "Күндер шұғыла болжамына байланысты, алдын ала жазыңыз"],
+                ["Night shooting", "Dates depend on the aurora forecast, so write in advance"])},
 ]
 
 ARCH = {
